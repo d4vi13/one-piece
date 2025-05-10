@@ -42,7 +42,7 @@ int cria_raw_socket(char* nome_interface_rede) {
 
 int main () {
 
-    int soquete = cria_raw_socket("lo");
+    int soquete = cria_raw_socket("enp4s0");
     char msg[64];
     int num = 0;
 
@@ -52,6 +52,9 @@ int main () {
         printf("Digite sua mensagem: ");
         scanf("%s", msg);
         num = send(soquete, msg, 64, 0);
+        printf("Esperando...\n");
+        num = recv(soquete, msg, 64, 0);
+        printf("mensagem: %s\n", msg);
     }
    
 }

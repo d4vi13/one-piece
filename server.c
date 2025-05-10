@@ -50,7 +50,10 @@ int main () {
     while(1){
         printf("Esperando...\n");
         num = recv(soquete, data, 64, 0);
-        printf("Recebeu \"%s\"\n", data);
+        printf("mensagem: \"%s\"\n", data);
+        printf("Digite sua mensagem: ");
+        scanf("%s", data);
+        num = send(soquete, data, 64, 0); 
     }
 
 }
