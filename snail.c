@@ -6,7 +6,7 @@ static inline ERROR_CODE
 create_socket (int* soquete, char network_interface[])
 {
     // Cria arquivo para o socket sem qualquer protocolo
-    *soquete = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+    *soquete = socket (AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
     if (*soquete == -1) {
         perror("Erro ao criar socket: Verifique se você é root!\n");
         return SOCKET_CREATE_FAILURE;
@@ -41,21 +41,20 @@ init_snail (char network_interface[])
 {
     ERROR_CODE code;
     /* Copia nome da interface de rede */
-    memcpy(snail.network_interface, network_interface, min(strlen(network_interface), 64));
+    memcpy (snail.network_interface, network_interface, min(strlen(network_interface), 64));
 
     /* Cria raw socket para comunicacao*/
-    code = create_socket(&snail.socket, snail.network_interface);
+    code = create_socket (&snail.socket, snail.network_interface);
     if (FAILED(code)) 
     {
-        perror("Erro ao criar o socker\n");
+        perror ("Erro ao criar o socker\n");
         exit(1);
     }
 
     /* TODO cria funcao para iniciar o pacote*/
 
     snail.pkg.start_marker = START_MARKER;
-    snail.pkg_size = PKG_SIZE;
-
+    snail.pkg_size = sizeof(struct package);// PKG_SIZE;
     return;
 }
 
@@ -64,7 +63,7 @@ send_pkg (PKG_TYPE pkg_type, uint8_t *data, uint8_t size)
 {
     static uint32_t seq = 0;
 
-    memset(snail.pkg.data, 0, MAX_DATA);
+    memset (snail.pkg.data, 0, MAX_DATA);
 
     printf("%s", data);
     snail.pkg.size = size;
@@ -91,22 +90,14 @@ send_pkg (PKG_TYPE pkg_type, uint8_t *data, uint8_t size)
 static inline void 
 print_pkg (struct package pkg)
 {
+    if(pkg.start_marker != START_MARKER)
+        return;
    printf ("start_marker: %d\n", pkg.start_marker); 
    printf ("size: %d\n", pkg.size); 
    printf ("sequence_number: %d\n", pkg.sequence_number); 
    printf ("type: %d\n", pkg.type); 
    printf ("checksum: %d\n", pkg.checksum); 
-   printf ("data: "); 
-   for (int i = 0; i < pkg.size; i++)
-   {
-       printf ("%c", pkg.start_marker); 
-   }
-   printf ("\n");
-   for (int i = 0; i < pkg.size; i++)
-   {
-       printf ("%d", pkg.start_marker); 
-   }
-   printf ("\n");
+   printf ("data: %s\n", pkg.data); 
 }
 
 ERROR_CODE 
@@ -118,7 +109,8 @@ recv_pkg ()
         perror ("Erro ao receber pacote");
         return RECV_PKG_FAILED;
     }
-
+    
+    printf("recebeu %d\n", bytes_recv);
     print_pkg (snail.pkg);
     return SUCCESS;
 }
