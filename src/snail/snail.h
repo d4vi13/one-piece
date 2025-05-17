@@ -1,26 +1,19 @@
 #ifndef SNAIL_H
 #define SNAIL_H
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <unistd.h>
-
-#define min(a,b) ( (a) < (b) ? (a) : (b) )
+#include "common.h"
+#include "pkg.h"
+#include "comm_dev/comm_dev.h"
 
 struct snail
 {
-    int socket;
     char network_interface[64];
-    struct package pkg;
-    uint32_t pkg_size;
+    struct pkg pkg;
 };
 
 extern struct snail snail;
 
-void 
+int 
 init_snail (char network_interface[]);
 
 #endif

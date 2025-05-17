@@ -1,6 +1,8 @@
 #ifndef PKG_H
 #define PKG_H
 
+#include "common.h" 
+
 #define PKG_SIZE sizeof (struct pkg)
 #define START_MARKER 0b01111110
 #define MAX_DATA 127

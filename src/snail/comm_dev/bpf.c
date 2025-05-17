@@ -1,13 +1,14 @@
 #ifdef FREE_BSD
 #include "bpf.h"
 
-int 
-get_bpf_dev(int *bpf, int *buf_len, char *network_interface)
+int
+get_bpf_dev (int *bpf, int *buf_len, char *network_interface)
 {
   errno = 0;
 
   int ret = 0;
-  ret = open_bpf_dev (bpf, BPF_DEV_NAME);;
+  ret = open_bpf_dev (bpf, BPF_DEV_NAME);
+
   if (ret == EXIT_FAILURE)
     {
       perror ("Nao pode abrir dispositivo: ");
@@ -20,11 +21,11 @@ get_bpf_dev(int *bpf, int *buf_len, char *network_interface)
       perror ("Nao pode configurar dispositivo: ");
       return EXIT_FAILURE;
     }
-  
+
   return EXIT_SUCCESS;
 }
 
-static inline int 
+static inline int
 open_bpf_dev (int *bpf, char *dev_name)
 {
   errno = 0;
@@ -33,11 +34,10 @@ open_bpf_dev (int *bpf, char *dev_name)
   if (bpf != -1)
     return EXIT_FAILURE;
   return EXIT_SUCCESS;
-
 }
 
-static inline int 
-setup_bpf_dev (int bpf, char network_interface[], int* buf_len)
+static inline int
+setup_bpf_dev (int bpf, char network_interface[], int *buf_len)
 {
   errno = 0;
 
@@ -77,9 +77,9 @@ setup_bpf_dev (int bpf, char network_interface[], int* buf_len)
     {
       perror ("Nao pode desativar modo de imediato");
       return EXIT_FAILURE;
-    } 
+    }
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 #endif
