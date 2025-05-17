@@ -1,6 +1,6 @@
 #include "comm_dev.h"
 
-struct comm_dev;
+struct comm_dev comm_dev;
 
 int
 init_comm_dev (comm_t comm_type, char network_interface[])
@@ -11,30 +11,30 @@ init_comm_dev (comm_t comm_type, char network_interface[])
 
   comm_dev.comm_type = comm_type;
 
-      switch (comm_type)
-  {
-  case BPF:
+  switch (comm_type)
+    {
+    case BPF:
 #ifdef FREE_BSD
-    int buf_len = PKG_SIZE;
-    ret = get_bpf_dev (&comm_dev.fd, &buf_len, network_interface);
-    if (ret == EXIT_FAILURE)
-      {
-        perror ("Nao consegui dispositvo bpf: ");
-        return EXIT_FAILURE;
-      }
+      int buf_len = PKG_SIZE;
+      ret = get_bpf_dev (&comm_dev.fd, &buf_len, network_interface);
+      if (ret == EXIT_FAILURE)
+        {
+          perror ("Nao consegui dispositvo bpf: ");
+          return EXIT_FAILURE;
+        }
 #endif
-    break;
-  case SOCKET:
+      break;
+    case SOCKET:
 #ifdef LINUX
-    ret = get_socket (&comm_dev.fd, network_interface);
-    if (ret == EXIT_FAILURE)
-      {
-        perror ("Nao consegui socket: ");
-        return EXIT_FAILURE;
-      }
+      ret = get_socket (&comm_dev.fd, network_interface);
+      if (ret == EXIT_FAILURE)
+        {
+          perror ("Nao consegui socket: ");
+          return EXIT_FAILURE;
+        }
 #endif
-    break;
-  }
+      break;
+    }
 
   return EXIT_SUCCESS;
 }
@@ -99,7 +99,7 @@ recv_pkg (struct pkg *pkg)
 {
   errno = 0;
 
-  int ret = 0; 
+  int ret = 0;
 
   switch (comm_dev.comm_type)
     {

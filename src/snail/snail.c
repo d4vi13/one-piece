@@ -5,7 +5,7 @@ struct snail snail;
 int
 init_snail (char network_interface[])
 {
-  errno = 0;  
+  errno = 0;
 
   int ret = 0;
   /* Copia nome da interface de rede */
@@ -23,34 +23,6 @@ init_snail (char network_interface[])
   return EXIT_SUCCESS;
 }
 
-int
-snail_send (pkg_t pkg_type , char *data, uint8_t size)
-{
-  errno = 0;
-
-  int ret = send_pkg (&snail.pkg, pkg_type, data, size);
-  if (ret == EXIT_FAILURE)
-    {
-      perror("Nao conseguir enviar pacote: ");
-      return EXIT_FAILURE;
-    }
-  return EXIT_SUCCESS;
-} 
-
-int 
-snail_recv ()
-{
-  errno = 0;
-
-  int ret = recv_pkg (&snail.pkg);
-  if (ret == EXIT_FAILURE)
-    {
-      perror ("Nao pode receber um pacote: ");
-      return EXIT_FAILURE;
-    }
-  return EXIT_SUCCESS;
-}
-
 static inline void
 print_pkg (struct pkg pkg)
 {
@@ -63,4 +35,35 @@ print_pkg (struct pkg pkg)
   printf ("checksum: %d\n", pkg.checksum);
   printf ("data: %s\n", pkg.data);
 }
+
+int
+snail_send (pkg_t pkg_type, char *data, uint8_t size)
+{
+  errno = 0;
+
+  int ret = send_pkg (&snail.pkg, pkg_type, data, size);
+  if (ret == EXIT_FAILURE)
+    {
+      perror ("Nao conseguir enviar pacote: ");
+      return EXIT_FAILURE;
+    }
+  return EXIT_SUCCESS;
+}
+
+int
+snail_recv ()
+{
+  errno = 0;
+
+  int ret = recv_pkg (&snail.pkg);
+  if (ret == EXIT_FAILURE)
+    {
+      perror ("Nao pode receber um pacote: ");
+      return EXIT_FAILURE;
+    }
+
+  print_pkg(snail.pkg);
+  return EXIT_SUCCESS;
+}
+
 

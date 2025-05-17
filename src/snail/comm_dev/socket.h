@@ -1,9 +1,9 @@
-#ifdef LINUX
-
 #ifndef SOCKET_H
 #define SOCKET_H
 
 #include "../common.h"
+
+#ifdef LINUX
 
 #include <arpa/inet.h>
 #include <linux/if_packet.h>

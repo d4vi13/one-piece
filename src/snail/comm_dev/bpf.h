@@ -1,8 +1,9 @@
-#ifdef FREE_BSD
 #ifndef BPF_H
 #define BPF_H
 
 #include "../common.h"
+
+#ifdef FREE_BSD
 
 #include <net/bpf.h>
 #include <net/if.h>

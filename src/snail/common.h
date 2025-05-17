@@ -3,14 +3,14 @@
 
 #define LINUX
 
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
-#include <errno.h>
 #include <unistd.h>
-#include <fcntl.h>
 
-#define min(a,b) ( (a) < (b) ? (a) : (b) )  
+#define min(a, b) ((a) < (b) ? (a) : (b))
 
 #endif

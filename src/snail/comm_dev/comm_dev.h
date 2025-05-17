@@ -1,6 +1,8 @@
 #ifndef COMM_DEV_H
+#define COMM_DEV_H
 
 #include "../common.h"
+
 #include "../pkg.h"
 #include "bpf.h"
 #include "socket.h"
