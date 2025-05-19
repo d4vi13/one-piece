@@ -9,7 +9,7 @@ calculate_checksum (const struct pkg *pkg)
 	sum += pkg->sequence_number;
 	sum += pkg->type;
 
-	for (int i = 0; i < pkg->size; i++)
+	for (int i = 0; i < pkg->size; i++) 
 		sum += pkg->data[i];
 
 	/* Retorna os 8 bits menos significativos */
