@@ -15,3 +15,10 @@ calculate_checksum (const struct pkg *pkg)
 	/* Retorna os 8 bits menos significativos */
 	return (uint8_t)(sum & 0xFF);
 }
+
+int
+validate_checksum (const struct pkg *pkg)
+{
+  uint8_t expected = calculate_checksum (pkg);
+  return (pkg->checksum == expected);
+}

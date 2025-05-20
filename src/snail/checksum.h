@@ -11,4 +11,7 @@
  */
 uint8_t calculate_checksum (const struct pkg *pkg); 
 
+int
+validate_checksum (const struct pkg *pkg);
+
 #endif
