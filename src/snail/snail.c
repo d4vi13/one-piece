@@ -13,7 +13,7 @@ init_snail (char network_interface[])
           min (strlen (network_interface), 64));
 
   /* Cria raw socket para comunicacao*/
-  ret = init_comm_dev (SOCKET, network_interface);
+  ret = init_comm_dev (BPF, network_interface);
   if (ret == EXIT_FAILURE)
     {
       perror ("Erro ao iniciar dispositivo de comunicação\n");
@@ -26,8 +26,9 @@ init_snail (char network_interface[])
 static inline void
 print_pkg (struct pkg pkg)
 {
-  if (pkg.start_marker != START_MARKER)
-    return;
+//if (pkg.start_marker != START_MARKER)
+//    return;
+
   printf ("start_marker: %d\n", pkg.start_marker);
   printf ("size: %d\n", pkg.size);
   printf ("sequence_number: %d\n", pkg.sequence_number);
@@ -54,6 +55,8 @@ int
 snail_recv ()
 {
   errno = 0;
+
+  memset(&snail.pkg, 0, sizeof snail.pkg);
 
   int ret = recv_pkg (&snail.pkg);
   if (ret == EXIT_FAILURE)

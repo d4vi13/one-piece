@@ -10,9 +10,12 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 
+#endif
+
+
 #define BPF_DEV_NAME "/dev/bpf0"
 
-int get_bpf_dev (int *bpf, int *buf_len, char *network_interface);
+int
+get_bpf_dev (int *bpf, int *buf_len, char *network_interface);
 
-#endif
 #endif

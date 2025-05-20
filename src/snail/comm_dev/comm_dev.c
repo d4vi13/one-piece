@@ -15,7 +15,7 @@ init_comm_dev (comm_t comm_type, char network_interface[])
     {
     case BPF:
 #ifdef FREE_BSD
-      int buf_len = PKG_SIZE;
+      int buf_len = BPF_BUF_SIZE;
       ret = get_bpf_dev (&comm_dev.fd, &buf_len, network_interface);
       if (ret == EXIT_FAILURE)
         {
@@ -77,6 +77,13 @@ send_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t *data, uint8_t size)
     {
     case BPF:
 #ifdef FREE_BSD
+      ret = write(comm_dev.fd, pkg, PKG_SIZE); 
+      printf("ret %d\n", ret);
+      if (ret == -1)
+        {
+          perror ("Nao pode enviar o pacote");
+          return EXIT_FAILURE;
+        }
 #endif
       break;
     case SOCKET:
@@ -105,6 +112,24 @@ recv_pkg (struct pkg *pkg)
     {
     case BPF:
 #ifdef FREE_BSD
+      struct bpf_xhdr *bh;
+      char *buf = malloc(BPF_BUF_SIZE);
+      if (!buf)
+      {
+        perror ("Nao pode alocar buffer para bpf: ");
+        return EXIT_FAILURE;
+      }
+
+      ret = read (comm_dev.fd, buf, BPF_BUF_SIZE);
+      bh = (struct bpf_xhdr *)buf;
+
+      memcpy(pkg, buf + bh->bh_hdrlen , PKG_SIZE);  
+
+      if (ret == -1)
+        {
+          perror ("Nao pode receber o pacote");
+          return EXIT_FAILURE;
+        }
 #endif
       break;
     case SOCKET:
@@ -112,7 +137,7 @@ recv_pkg (struct pkg *pkg)
       ret = recv (comm_dev.fd, pkg, PKG_SIZE, 0);
       if (ret == -1)
         {
-          perror ("Nao pode enviar o pacote");
+          perror ("Nao pode receber o pacote");
           return EXIT_FAILURE;
         }
 #endif
