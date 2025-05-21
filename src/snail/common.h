@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define FREE_BSD
+#define LINUX
 
 #include <errno.h>
 #include <fcntl.h>
