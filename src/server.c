@@ -4,7 +4,8 @@ int
 main (int argc, char **argv)
 {
   init_snail (argv[1]);
-  char msg[] = "the one piece is real";
+  char msg[] = "james";
+
 
   while (1)
     {

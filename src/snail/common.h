@@ -12,5 +12,6 @@
 #include <unistd.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
+#define BPF_BUF_SIZE 256
 
 #endif
