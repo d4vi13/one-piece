@@ -25,8 +25,8 @@ extern struct comm_dev comm_dev;
 
 int init_comm_dev (comm_t comm_type, char network_interface[]);
 
-int send_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t *data, uint8_t size);
+int send_pkg (struct pkg *pkg);
 
-int recv_pkg ();
+int recv_pkg (struct pkg *pkg);
 
 #endif

@@ -39,39 +39,13 @@ init_comm_dev (comm_t comm_type, char network_interface[])
   return EXIT_SUCCESS;
 }
 
-static inline int
-prepare_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t *data, uint8_t size)
-{
-  errno = 0;
-
-  static uint32_t seq = 0;
-
-  memset (pkg->data, 0, MAX_DATA);
-
-  pkg->start_marker = START_MARKER;
-  pkg->size = size;
-  pkg->sequence_number = seq++;
-  pkg->type = pkg_type;
-  pkg->checksum = 0;
-
-  memcpy (pkg->data, data, min (size, MAX_DATA));
-
-  return EXIT_SUCCESS;
-}
 
 int
-send_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t *data, uint8_t size)
+send_pkg (struct pkg *pkg)
 {
   errno = 0;
 
   int ret = 0;
-
-  ret = prepare_pkg (pkg, pkg_type, data, size);
-  if (ret == EXIT_FAILURE)
-    {
-      perror ("Nao pode prepara pacote: ");
-      return EXIT_FAILURE;
-    }
 
   switch (comm_dev.comm_type)
     {
