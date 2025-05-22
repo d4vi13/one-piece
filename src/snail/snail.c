@@ -37,36 +37,8 @@ print_pkg (struct pkg pkg)
   printf ("data: %s\n", pkg.data);
 }
 
-int
-snail_send (pkg_t pkg_type, char *data, uint8_t size)
+uint8_t
+get_seq_num ()
 {
-  errno = 0;
-
-  int ret = send_pkg (&snail.pkg, pkg_type, data, size);
-  if (ret == EXIT_FAILURE)
-    {
-      perror ("Nao conseguir enviar pacote: ");
-      return EXIT_FAILURE;
-    }
-  return EXIT_SUCCESS;
+  return snail.seq_num++;
 }
-
-int
-snail_recv ()
-{
-  errno = 0;
-
-  memset(&snail.pkg, 0, sizeof snail.pkg);
-
-  int ret = recv_pkg (&snail.pkg);
-  if (ret == EXIT_FAILURE)
-    {
-      perror ("Nao pode receber um pacote: ");
-      return EXIT_FAILURE;
-    }
-
-  print_pkg(snail.pkg);
-  return EXIT_SUCCESS;
-}
-
-
