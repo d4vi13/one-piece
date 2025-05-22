@@ -7,6 +7,9 @@
 #include "bpf.h"
 #include "socket.h"
 
+#define ERRNO_IS_TIMEOUT (errno == EAGAIN || errno == EWOULDBLOCK)
+#define TIME_OUT 100
+
 enum comm_t
 {
   SOCKET,

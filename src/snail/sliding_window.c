@@ -64,10 +64,13 @@ wait_res ()
   while (1)
   {
     ret = recv_pkg (&sliding_window.res);
-    if (ret == ETIMEDOUT)
+    if (ret == EXIT_FAILURE)
       {
-        perror ("Time out, reenviar toda a janela: ");
-        resend (sliding_window.head);
+        if (ERRNO_IS_TIMEOUT())
+          {
+            perror ("Time out, reenviar toda a janela: ");
+            resend (sliding_window.head);
+          }
       }
 
     if (sliding_window.res.type == ACK)
