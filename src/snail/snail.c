@@ -69,4 +69,36 @@ snail_recv ()
   return EXIT_SUCCESS;
 }
 
+/* Serializa um pacote em um buffer de bytes */
+size_t 
+serialize_pkg (const struct pkg *pkg, uint8_t *out_buf) 
+{
+  size_t i = 0;
+  
+  out_buf[i++] = pkg->start_marker;
+  out_buf[i++] = pkg->size & 0x7F;
+  out_buf[i++] = ((pkg->sequence_number & 0x1F) << 3) | (pkg->type & 0x0F);
+  out_buf[i++] = pkg->checksum;
+  
+  memcpy(&out_buf[i], pkg->data, pkg->size);
+  return i + pkg->size;
+}
 
+/* Desserializa um buffer de bytes em uma estrutura de pacote */
+void 
+deserialize_pkg (struct pkg *pkg, const uint8_t *in_buf, size_t len) 
+{
+  size_t i = 0;
+  
+  pkg->start_marker = in_buf[i++];
+  pkg->size = in_buf[i++] & 0x7F;
+  
+  uint8_t seq_type = in_buf[i++];
+  
+  pkg->sequence_number = (seq_type >> 3) & 0x1F;
+  pkg->type = seq_type & 0x0F;
+  pkg->checksum = in_buf[i++];
+  
+  memset(pkg->data, 0, MAX_DATA);
+  memcpy(pkg->data, &in_buf[i], pkg->size);
+}
