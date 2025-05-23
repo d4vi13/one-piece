@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define FREE_BSD
+#define LINUX
 
 #include <errno.h>
 #include <fcntl.h>
@@ -13,5 +13,6 @@
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define BPF_BUF_SIZE 256
+#define TIME_OUT 100
 
 #endif

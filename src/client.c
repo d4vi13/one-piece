@@ -1,4 +1,5 @@
 #include "snail/snail.h"
+#include "snail/file_ops.h"
 
 int
 main (int argc, char **argv)
@@ -7,6 +8,6 @@ main (int argc, char **argv)
 
   while (1)
     {
-      snail_recv ();
+      recv_file (argv[2]);
     }
 }

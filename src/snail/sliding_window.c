@@ -55,7 +55,7 @@ resend (uint8_t n)
 }
 
 int
-wait_res ()
+wait_any_res ()
 {
   errno = 0;
   
@@ -66,7 +66,7 @@ wait_res ()
     ret = recv_pkg (&sliding_window.res);
     if (ret == EXIT_FAILURE)
       {
-        if (ERRNO_IS_TIMEOUT())
+        if (ERRNO_IS_TIMEOUT)
           {
             perror ("Time out, reenviar toda a janela: ");
             resend (sliding_window.head);
@@ -87,22 +87,61 @@ wait_res ()
   }
 }
 
+int
+wait_pkg_n (uint8_t n)
+{
+  errno = 0;
+  
+  int ret = 0;
+
+  while (1)
+  {
+    ret = recv_pkg (&sliding_window.res);
+    if (ret == EXIT_FAILURE)
+      {
+        if (ERRNO_IS_TIMEOUT)
+          {
+            perror ("Time out, reenviar toda a janela: ");
+            resend (sliding_window.head);
+          }
+      }
+
+    // TODO make a macro that check all possible ACK types
+    if (sliding_window.res.type == ACK)
+      {
+        free_pkg_n (sliding_window.res.sequence_number);
+        if (sliding_window.res.sequence_number >= n)
+          return EXIT_SUCCESS;
+      }
+
+    if (sliding_window.res.type == NACK)
+      {
+        uint8_t pos = pkg_n_pos (sliding_window.res.sequence_number);
+        resend (pos);
+      }
+    
+  }
+}
+
 int 
 snail_send (struct pkg *pkg)
 {
   errno = 0;
 
   if (window_full ())
-      wait_res();
+      wait_any_res ();
 
   /* adiciona pacote na janela */
   uint8_t idx = (sliding_window.head + sliding_window.counter + 1) % WINDOW_SIZE;
   memcpy (&sliding_window.pkgs[idx], pkg, sizeof*pkg);
   sliding_window.counter++;
 
+  printf ("data: %s\n", pkg->data);
+
   /* manda pacote */
   while (send_pkg(pkg) == EXIT_FAILURE);
 
+  printf ("send pkg %d\n", pkg->sequence_number);
   return EXIT_SUCCESS;
 }
 
@@ -123,6 +162,8 @@ snail_recv (struct pkg *pkg, int ack)
           perror ("Nao pode receber pacote: ");
           continue;
         }
+      printf ("recv pkg %d\n", pkg->sequence_number);
+      printf ("data: %s\n", pkg->data);
     }
   while (pkg->sequence_number == sliding_window.expected_pkg_num);
   

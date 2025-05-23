@@ -22,18 +22,16 @@ struct sliding_window
 
 extern struct sliding_window sliding_window; 
 
-int 
-get_pkg (struct pkg **pkg);
+int
+wait_res ();
 
 int
-wait_res();
+wait_pkg_n (uint8_t n);
 
-/* Reconhece todos os pacotes na janela com sequence_number <= n */
-int
-ack_pkg_n (uint8_t n);
-
-/* Reenvia todos os pacotes com sequence_number >= n*/
 int 
-resend (uint8_t n);
+snail_send (struct pkg *pkg);
+
+int 
+snail_recv (struct pkg *pkg, int ack);
 
 #endif

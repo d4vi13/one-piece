@@ -49,7 +49,7 @@ prepare_treasure_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, char *fi
 void 
 prepare_eof_pkg (struct pkg *pkg)
 {
-  prepare_pkg (pkg, END_OF_FILE, get_seq_num, 0);
+  prepare_pkg (pkg, END_OF_FILE, get_seq_num (), 0);
 }
 
 int 

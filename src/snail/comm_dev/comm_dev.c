@@ -41,6 +41,12 @@ init_comm_dev (comm_t comm_type, char network_interface[])
 
 
 int
+valid_pkg (struct pkg *pkg)
+{
+  return pkg->start_marker == 0b01111110;
+}
+
+int
 send_pkg (struct pkg *pkg)
 {
   errno = 0;
@@ -116,6 +122,11 @@ recv_pkg (struct pkg *pkg)
         }
 #endif
       break;
+    }
+
+  if (!valid_pkg (pkg))
+    {
+      return EXIT_FAILURE;
     }
 
   return EXIT_SUCCESS;

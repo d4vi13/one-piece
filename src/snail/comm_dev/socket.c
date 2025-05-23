@@ -37,10 +37,9 @@ get_socket (int *sock, char network_interface[])
       return EXIT_FAILURE;
     }
 
-  struct timeval tv = struct timeval timeout
-      = { .tv_sec = TIME_OUT / 1000, .tv_usec = (TIME_OUT % 1000) * 1000 };
+  struct timeval timeout = { .tv_sec = TIME_OUT / 1000, .tv_usec = (TIME_OUT % 1000) * 1000 };
 
-  if (setsockopt (*sock, SOL_PACKET, SO_RCVTIMEO, (char *)tv, sizeof tv) == -1)
+  if (setsockopt (*sock, SOL_PACKET, SO_RCVTIMEO, (char *) &timeout, sizeof (timeout)) == -1)
     {
       perror ("Nao pode configurar o timeout: ");
       return EXIT_FAILURE;
