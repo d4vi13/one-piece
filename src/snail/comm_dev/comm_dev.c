@@ -82,7 +82,7 @@ send_pkg (struct pkg *pkg)
 }
 
 int
-recv_pkg (struct pkg *pkg)
+_recv_pkg (struct pkg *pkg)
 {
   errno = 0;
 
@@ -117,7 +117,6 @@ recv_pkg (struct pkg *pkg)
       ret = recv (comm_dev.fd, pkg, PKG_SIZE, 0);
       if (ret == -1)
         {
-          perror ("Nao pode receber o pacote");
           return EXIT_FAILURE;
         }
 #endif
@@ -129,5 +128,38 @@ recv_pkg (struct pkg *pkg)
       return EXIT_FAILURE;
     }
 
+
+
   return EXIT_SUCCESS;
+}
+
+long long 
+timestamp()
+{
+    struct timeval tp;
+    gettimeofday (&tp, NULL);
+    return tp.tv_sec*1000 + tp.tv_usec/1000;
+}
+
+
+int
+recv_pkg (struct pkg *pkg)
+{
+  errno = 0;
+  int ret = 0;
+
+  long long comeco = timestamp ();
+
+  do 
+    {
+      ret = _recv_pkg (pkg);
+      if (ret == EXIT_SUCCESS)
+        break;
+    }
+  while (timestamp () - comeco <= TIME_OUT);
+
+  if (ret == EXIT_FAILURE)
+    errno = EAGAIN;
+
+  return ret;
 }

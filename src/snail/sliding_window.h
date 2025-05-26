@@ -22,6 +22,9 @@ struct sliding_window
 
 extern struct sliding_window sliding_window; 
 
+void
+init_sliding_window ();
+
 int
 wait_res ();
 

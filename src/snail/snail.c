@@ -13,13 +13,14 @@ init_snail (char network_interface[])
           min (strlen (network_interface), 64));
 
   /* Cria raw socket para comunicacao*/
-  ret = init_comm_dev (BPF, network_interface);
+  ret = init_comm_dev (SOCKET, network_interface);
   if (ret == EXIT_FAILURE)
     {
       perror ("Erro ao iniciar dispositivo de comunicação\n");
       return EXIT_FAILURE;
     }
 
+  init_sliding_window ();
   return EXIT_SUCCESS;
 }
 

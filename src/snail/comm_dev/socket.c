@@ -6,7 +6,7 @@ get_socket (int *sock, char network_interface[])
 {
   errno = 0;
   // Cria arquivo para o socket sem qualquer protocolo
-  *sock = socket (AF_PACKET, SOCK_RAW, htons (ETH_P_ALL));
+  *sock = socket (AF_PACKET, SOCK_RAW | SOCK_NONBLOCK , htons (ETH_P_ALL));
   if (*sock == -1)
     {
       perror ("Erro ao criar socket: Verifique se você é root!\n");
@@ -39,11 +39,13 @@ get_socket (int *sock, char network_interface[])
 
   struct timeval timeout = { .tv_sec = TIME_OUT / 1000, .tv_usec = (TIME_OUT % 1000) * 1000 };
 
-  if (setsockopt (*sock, SOL_PACKET, SO_RCVTIMEO, (char *) &timeout, sizeof (timeout)) == -1)
+  /*
+  if (setsockopt (*sock, SOL_PACKET, SO_RCVTIMEO, &timeout, sizeof (timeout)) == -1)
     {
       perror ("Nao pode configurar o timeout: ");
       return EXIT_FAILURE;
     }
+    */
 
   return EXIT_SUCCESS;
 }

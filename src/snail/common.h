@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/time.h>
+
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define BPF_BUF_SIZE 256
