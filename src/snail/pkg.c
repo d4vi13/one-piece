@@ -15,6 +15,7 @@ prepare_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, uint8_t size)
 void  
 prepare_ack_pkg (struct pkg *pkg, uint8_t seq_num, pkg_t pkg_type)
 {
+  memset (pkg->data, 0, MAX_DATA);
   prepare_pkg (pkg, pkg_type, seq_num, 0);
 }
 
@@ -49,6 +50,7 @@ prepare_treasure_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, char *fi
 void 
 prepare_eof_pkg (struct pkg *pkg)
 {
+  memset (pkg->data, 0, MAX_DATA);
   prepare_pkg (pkg, END_OF_FILE, get_seq_num (), 0);
 }
 
@@ -57,8 +59,8 @@ ack_pkg (uint8_t seq_num)
 {
   errno = 0;
 
-  prepare_ack_pkg (&snail.pkg, seq_num, ACK);
-  while (send_pkg (&snail.pkg) == EXIT_FAILURE);
+  prepare_ack_pkg (&snail.ack, seq_num, ACK);
+  while (send_pkg (&snail.ack) == EXIT_FAILURE);
 
   return EXIT_SUCCESS;
 } 

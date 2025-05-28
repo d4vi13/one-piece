@@ -59,7 +59,9 @@ resend (uint8_t n)
 {
   errno = 0;
 
-  int ret, i = 0;
+  print_sw_status ();
+
+  int ret, i = sliding_window.head;
 
   do
     {
@@ -194,6 +196,8 @@ snail_recv (struct pkg *pkg, int ack)
     
   memset (pkg, 0, sizeof *pkg);
 
+  printf ("espera %d\n", sliding_window.expected_pkg_num);
+
   while (1)
     {
       ret = recv_pkg(pkg); 
@@ -202,7 +206,6 @@ snail_recv (struct pkg *pkg, int ack)
           //perror ("Nao pode receber pacote: ");
           continue;
         }
-
       if (pkg->sequence_number == sliding_window.expected_pkg_num)
         break;
     }

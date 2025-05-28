@@ -18,7 +18,8 @@ send_file (char *filename)
       perror ("Nao pode alocar buffer de leitura: ");
       return EXIT_FAILURE;
     }
-
+  
+  unsigned long long c = 0;
   while (!feof (file))
     {
       int bytes_read = fread (buf, 1, MAX_DATA, file);      
@@ -28,6 +29,8 @@ send_file (char *filename)
           return EXIT_FAILURE;
         }
 
+      c += bytes_read;
+      printf ("bytes mandados %d\n", c);
       prepare_data_pkg (&snail.pkg, buf, bytes_read);
       snail_send (&snail.pkg); 
     }
@@ -40,24 +43,31 @@ send_file (char *filename)
   return EXIT_FAILURE;
 }
 
+void print (char *buf)
+{
+  for (int i = 0; i < sizeof(struct pkg); i++)
+    printf ("%x ", (unsigned char) buf[i]);
+  printf("\n");
+}
+
 int 
 recv_file (char *filename)
 {
    errno = 0;
 
-  FILE* file = fopen (filename, "w");
-  if (!file)
+  int file = open (filename, O_WRONLY);
+  if (file == -1)
     {
       perror ("Nao pode abrir o arquivo");
       return EXIT_FAILURE;
     } 
 
-  while (!feof (file))
+  while (1)
     {
       snail_recv (&snail.pkg, 1);
       if (snail.pkg.type == END_OF_FILE)
         break;
-      while (fwrite (&snail.pkg.data, 1, snail.pkg.size, file) <= 0);
+      write (file, snail.pkg.data, snail.pkg.size);
     }
 
  return EXIT_SUCCESS; 

@@ -9,6 +9,7 @@ struct snail
 {
   char network_interface[64];
   struct pkg pkg;
+  struct pkg ack;
   uint8_t seq_num : 5;
 };
 
