@@ -19,4 +19,10 @@ int snail_send (pkg_t pkg_type, char *data, uint8_t size);
 
 int snail_recv ();
 
+size_t serialize_pkg (const struct pkg *pkg, uint8_t *out_buf);
+
+void deserialize_pkg (struct pkg *pkg, const uint8_t *in_buf, size_t len);
+
+
+
 #endif
