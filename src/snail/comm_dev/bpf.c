@@ -69,6 +69,16 @@ setup_bpf_dev (int bpf, char network_interface[], int *buf_len)
       return EXIT_FAILURE;
     }
 
+  struct timeval timeout = {
+        .tv_sec = TIME_OUT / 1000,
+        .tv_usec = (TIME_OUT % 1000) * 1000
+    };
+  ret = ioctl (bpf, BIOCSRTIMEOUT, &timeout);
+  if (ret == -1)
+    {
+      perror ("Nao pode configurar timeout");
+      return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }

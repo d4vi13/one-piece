@@ -9,15 +9,15 @@ struct snail
 {
   char network_interface[64];
   struct pkg pkg;
+  struct pkg ack;
+  uint8_t seq_num : 5;
 };
 
 extern struct snail snail;
 
 int init_snail (char network_interface[]);
 
-int snail_send (pkg_t pkg_type, char *data, uint8_t size);
-
-int snail_recv ();
+uint8_t get_seq_num ();
 
 size_t serialize_pkg (const struct pkg *pkg, uint8_t *out_buf);
 

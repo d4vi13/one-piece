@@ -47,4 +47,21 @@ struct __attribute__ ((packed)) pkg
   uint8_t data[MAX_DATA];
 };
 
+void  
+prepare_ack_pkg (struct pkg *pkg, uint8_t seq_num, pkg_t pkg_type);
+
+void 
+prepare_treasure_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, char *filename);
+
+void 
+prepare_data_pkg (struct pkg *pkg, void *buf, uint8_t size);
+  
+void 
+prepare_size_pkg (struct pkg *pkg, uint32_t size);
+
+void 
+prepare_eof_pkg (struct pkg *pkg);
+ 
+int 
+ack_pkg (uint8_t seq_num);
 #endif

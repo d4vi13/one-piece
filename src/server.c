@@ -1,14 +1,12 @@
 #include "snail/snail.h"
+#include "snail/file_ops.h"
 
 int
 main (int argc, char **argv)
 {
   init_snail (argv[1]);
-  char msg[] = "james";
 
+  send_file (argv[2]);
 
-  while (1)
-    {
-      snail_send (DATA, msg, strlen (msg));
-    }
+  return 0;
 }

@@ -1,7 +1,7 @@
 #include "comm_dev.h"
-#include "snail/checksum.h"
-#include "snail/escape.h"
-#include "snail/snail.h"
+#include "../checksum.h"
+#include "../escape.h"
+#include "../snail.h"
 
 struct comm_dev comm_dev;
 
@@ -42,51 +42,31 @@ init_comm_dev (comm_t comm_type, char network_interface[])
   return EXIT_SUCCESS;
 }
 
-static inline int
-prepare_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t *data, uint8_t size)
+int
+valid_pkg (struct pkg *pkg)
 {
-  errno = 0;
-
-  static uint32_t seq = 0;
-
-  memset (pkg->data, 0, MAX_DATA);
-
-  pkg->start_marker = START_MARKER;
-  pkg->size = size;
-  pkg->sequence_number = seq++;
-  pkg->type = pkg_type;
-
-  memcpy (pkg->data, data, min (size, MAX_DATA));
-
-  pkg->checksum = calculate_checksum (pkg);
-
-  return EXIT_SUCCESS;
+  return pkg->start_marker == 0b01111110;
 }
 
-int send_pkg(struct pkg *pkg, pkg_t pkg_type, uint8_t *data, uint8_t size)
+int
+send_pkg (struct pkg *pkg)
 {
   errno = 0;
   int ret;
-
-  //Prepara o pacote com os dados e metadados
-  ret = prepare_pkg(pkg, pkg_type, data, size);
-  if (ret == EXIT_FAILURE) {
-    perror("Nao pode preparar pacote");
-    return EXIT_FAILURE;
-  }
 
   //Buffer para serialização e escape
   uint8_t raw_buf[PKG_SIZE];
   uint8_t escaped_buf[2 * PKG_SIZE]; // espaço extra para escapes
 
   //Serializa pacote -> raw_buf
-  size_t serialized_len = serialize_pkg(pkg, raw_buf);
+  //size_t serialized_len = serialize_pkg(pkg, raw_buf);
 
   //Aplica escape -> escaped_buf
-  int escaped_len = escape_bytes(raw_buf, serialized_len, escaped_buf);
+  int escaped_len = escape_bytes((uint8_t *)pkg, PKG_SIZE, escaped_buf);
 
   //Envia pela rede conforme o tipo
   switch (comm_dev.comm_type) {
+
     case BPF:
 #ifdef FREE_BSD
       ret = write(comm_dev.fd, escaped_buf, escaped_len);
@@ -110,15 +90,14 @@ int send_pkg(struct pkg *pkg, pkg_t pkg_type, uint8_t *data, uint8_t size)
   return EXIT_SUCCESS;
 }
 
-int recv_pkg(struct pkg *pkg)
+int
+_recv_pkg (struct pkg *pkg)
 {
   errno = 0;
   int ret;
 
   //Buffer para leitura (máximo possível com escapes)
   uint8_t escaped_buf[2 * PKG_SIZE];
-  uint8_t raw_buf[PKG_SIZE];
-
   int received_len = 0;
 
   switch (comm_dev.comm_type) {
@@ -158,14 +137,42 @@ int recv_pkg(struct pkg *pkg)
   }
 
   //Remove escapes
-  int raw_len = unescape_bytes(escaped_buf, received_len, raw_buf);
-  if (raw_buf[0] != START_MARKER) {
-    fprintf(stderr, "Pacote ignorado: start_marker invalido (%d)\n", raw_buf[0]);
-    return EXIT_FAILURE;
-  }
-  
-  //Desserializa para a estrutura `pkg`
-  deserialize_pkg(pkg, raw_buf, raw_len);
+  int raw_len = unescape_bytes(escaped_buf, received_len, (uint8_t *) pkg);
 
+  if (!valid_pkg (pkg))
+    {
+      return EXIT_FAILURE;
+    }
   return EXIT_SUCCESS;
+}
+
+long long 
+timestamp()
+{
+    struct timeval tp;
+    gettimeofday (&tp, NULL);
+    return tp.tv_sec*1000 + tp.tv_usec/1000;
+}
+
+
+int
+recv_pkg (struct pkg *pkg)
+{
+  errno = 0;
+  int ret = 0;
+
+  long long comeco = timestamp ();
+
+  do 
+    {
+      ret = _recv_pkg (pkg);
+      if (ret == EXIT_SUCCESS)
+        break;
+    }
+  while (timestamp () - comeco <= TIME_OUT);
+
+  if (ret == EXIT_FAILURE)
+    errno = EAGAIN;
+
+  return ret;
 }
