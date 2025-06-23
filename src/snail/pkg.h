@@ -13,6 +13,8 @@
 #define START_MARKER 0b01111110
 #define MAX_DATA 127
 
+#define ACKED(t) ((t) == ACK || (t) == OK_ACK || (t) == TEXT_ACK_NAME || (t) == VIDEO_ACK_NAME || (t) == IMG_ACK_NAME || (t) ==  ERROR)  
+
 /* Tipos de pacotes a serem usados pelo protocolo */
 enum pkg_t
 {
@@ -64,4 +66,11 @@ prepare_eof_pkg (struct pkg *pkg);
  
 int 
 ack_pkg (uint8_t seq_num);
+
+int
+treasure_ack (uint8_t seq_num, pkg_t pkg_type, char *filename);
+
+int
+ok_ack_pkg ();
+
 #endif

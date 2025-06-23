@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
   init_snail(argv[1]);
   memset(jogo.grid, 0, sizeof(jogo.grid));
-  jogo.grid[y][x] = 1;
+  jogo.grid[jogo.y][jogo.x] = 1;
 
 	while (1) {
 	switch (jogo.estado) 

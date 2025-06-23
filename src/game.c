@@ -17,16 +17,17 @@ receive_move_state ()
 			return;
 		}
 
-		atualiza_posicao(p.type);
+		atualiza_posicao(jogo.recv.type);
 
-		int t = tesouro_na_posicao();
-		if (t)
+		jogo.treasure = tesouro_na_posicao();
+		if (jogo.treasure)
 			{
-				reportar_tesouro(t);
-			}
+        treasure_ack(jogo.recv.sequence_number, pkg_type[arquivos[jogo.treasure]], filename(jogo.treasure));
+        jogo.estado = COMECA_FALAR;
+      }
 		else
 			{
-				ack_move (); 	
+				ok_ack_pkg (); 	
 			}
 }
 
@@ -38,12 +39,12 @@ send_move_state ()
 	pkg_t tipo = direcao_para_tipo(c);
 	if (tipo == ERROR){
 		printf("Movimento inválido!\n");
-		continue;
+		return;
 	}
 
 	send_move (); // manda move e recebe res (jogo.res)
 
-	switch (jogo.res) 
+	switch (jogo.recv) 
 	{
 		case OK_ACK:
 			break;
@@ -67,30 +68,40 @@ receive_treasure_state ()
 void
 send_treasure_state ()
 {
-	pegar nome inteiro do arquivo	
+  int tamanho = obter_tamanho_arquivo(filename(jogo.treasure)); // pega tamanho do arquivo
+  prepare_size_pkg(&jogo.send, tamanho);
+  snail_send(&jogo.send);
 
-	enviar tamanho
-	senao houver erro
-		enviar arquivo
+  struct pkg * res = wait_pkg_num(jogo.send.sequence_number);
+  if (res->type == ERROR) {
+    fprintf(stderr, "Sem espaço suficiente para enviar o arquivo.\n");
+    return;
+  }
+
+  send_file(filename(jogo.treasure));
+  
+  jogo.estado = PARA_DE_FALAR; 
 
 }
 
 void 
 stop_talking_state ()
 {
-	send_start_talking() // espera por qualquer coisa e sai 
-	jogo.estado = RECEBE
+	send_start_talking(); // espera por qualquer coisa e sai 
+	jogo.estado = RECEBE;
 }
 
 void
 start_talking_state ()
 {
-	receber
-	se receber pacote passado
-		remandar ultimo ack
-	se start talking
-		ack start talking
-		troca de estado para MANDA	
+  while (1) {
+    snail_recv(&jogo.recv, 1);
+    if (jogo.recv.type == FREE )
+    {
+      jogo.estado = MANDA;
+      break;
+    }
+  }
 }
 
 /* UTILS */
@@ -147,10 +158,10 @@ void limpar() {
 }
 
 void desenha() {
-  printf("Posicao: (%d, %d)\n", x, y);
+  printf("Posicao: (%d, %d)\n", jogo.x, jogo.y);
   for (int j = GRID_SIZE - 1; j >= 0; j--) {
     for (int i = 0; i < GRID_SIZE; i++) {
-      if (x == i && y == j)
+      if (jogo.x == i && jogo.y == j)
         printf("@ ");
       else if (jogo.grid[j][i])
         printf(". ");
@@ -176,4 +187,18 @@ pkg_t direcao_para_tipo(char c) {
     case 'd': return SHIFT_RIGHT;
     default: return ERROR;
   }
+}
+
+int obter_tamanho_arquivo(char* filename) {
+  FILE *file = fopen(filename, "rb");
+  if (!file) {
+    perror("Erro ao abrir arquivo");
+    return -1;
+  }
+
+  fseek(file, 0, SEEK_END);
+  int size = ftell(file);
+  fclose(file);
+
+  return size;
 }

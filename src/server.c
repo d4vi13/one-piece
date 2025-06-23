@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 			case RECEBE:
 				receive_move_state ();
 				break;
-			case MANDA
+			case MANDA:
 				send_treasure_state ();
 				break;
 			case PARA_DE_FALAR:

@@ -99,7 +99,7 @@ wait_any_res ()
         continue;
       }
 
-    if (sliding_window.res.type == ACK)
+    if (ACKED(sliding_window.res.type))
       {
         free_pkg_n (sliding_window.res.sequence_number);
         return EXIT_SUCCESS;
@@ -113,7 +113,7 @@ wait_any_res ()
   }
 }
 
-int
+struct pkg *
 wait_pkg_n (uint8_t n)
 {
   errno = 0;
@@ -134,11 +134,11 @@ wait_pkg_n (uint8_t n)
       }
 
     // TODO make a macro that check all possible ACK types
-    if (sliding_window.res.type == ACK)
+    if (ACKED(sliding_window.res.type))
       {
         free_pkg_n (sliding_window.res.sequence_number);
         if (sliding_window.res.sequence_number >= n)
-          return EXIT_SUCCESS;
+          return &sliding_window.res;
       }
 
     if (sliding_window.res.type == NACK)
@@ -208,6 +208,11 @@ snail_recv (struct pkg *pkg, int ack)
         }
       if (pkg->sequence_number == sliding_window.expected_pkg_num)
         break;
+      else 
+        {
+          resend_last_ack ();
+          continue;
+        }
     }
   
   sliding_window.expected_pkg_num++;

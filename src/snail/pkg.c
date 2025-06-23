@@ -44,7 +44,9 @@ prepare_treasure_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, char *fi
   prepare_pkg (pkg, pkg_type, seq_num, strlen(filename));
   
   memset (pkg->data, 0, MAX_DATA);
-  memcpy (pkg->data, filename, strlen(filename));
+
+  memcpy (pkg->data, seq_num, sizeof seq_num);
+  memcpy (pkg->data + sizeof seq_num, filename, strlen(filename));
 }
 
 void 
@@ -65,4 +67,59 @@ ack_pkg (uint8_t seq_num)
   return EXIT_SUCCESS;
 } 
 
+int 
+ok_ack_pkg (uint8_t seq_num)
+{
+  errno = 0;
 
+  prepare_ack_pkg (&snail.ack, seq_num, OK_ACK);
+  while (send_pkg (&snail.ack) == EXIT_FAILURE);
+
+  return EXIT_SUCCESS;
+}
+
+int 
+treasure_ack (uint8_t seq_num, pkg_t pkg_type, char *filename)
+{
+  errno = 0;
+
+  prepare_treasure_pkg (&snail.ack, pkg_type, seq_num, filename);
+  while (send_pkg (&snail.ack) == EXIT_FAILURE);
+
+  return EXIT_SUCCESS;
+}
+
+
+int 
+resend_last_ack ()
+{
+  errno = 0;
+
+  if (snail.pkg.sequence_number == 0)
+    {
+      fprintf (stderr, "Nenhum pacote enviado ainda.\n");
+      return EXIT_FAILURE;
+    }
+
+  while (send_pkg (&snail.ack) == EXIT_FAILURE);
+
+  return EXIT_SUCCESS;
+}
+
+void
+send_start_talking ()
+{
+  errno = 0;
+
+  struct pkg pkg;
+  prepare_ack_pkg (&snail.pkg, get_seq_num (), FREE);
+  while (1) {
+    send_pkg (&snail.pkg);
+    
+    if (recv_pkg (&pkg) == EXIT_SUCCESS)
+    {
+      break;
+    }
+  }
+
+}

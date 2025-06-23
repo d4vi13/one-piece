@@ -7,6 +7,9 @@
 #include <time.h>
 #include <unistd.h>
 #include "snail/snail.h"
+#include "snail/file_ops.h"
+
+#include "objetos.h"
 
 #define GRID_SIZE 8
 
@@ -28,6 +31,7 @@ struct Jogo{
 	struct pkg recv;
 
 	state estado;
+	int treasure;
 };
 
 typedef struct Jogo Jogo, *pJogo;
