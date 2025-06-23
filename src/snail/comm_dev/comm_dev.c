@@ -139,7 +139,7 @@ _recv_pkg (struct pkg *pkg)
   //Remove escapes
   int raw_len = unescape_bytes(escaped_buf, received_len, (uint8_t *) pkg);
 
-  if (!valid_pkg (pkg))
+  if (!valid_pkg (pkg) || !validate_checksum (pkg))
     {
       return EXIT_FAILURE;
     }

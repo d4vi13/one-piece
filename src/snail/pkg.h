@@ -2,6 +2,7 @@
 #define PKG_H
 
 #include "common.h"
+#include "checksum.h"
 
 #ifdef FREE_BSD
 

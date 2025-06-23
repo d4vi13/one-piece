@@ -8,7 +8,7 @@ prepare_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, uint8_t size)
   pkg->size = size;
   pkg->sequence_number = seq_num;
   pkg->type = pkg_type;
-  pkg->checksum = 0;
+  pkg->checksum = calculate_checksum (pkg);
 }
 
 /* usado para preparar pacotes ACK/NACK/OK+ACK */
@@ -22,31 +22,31 @@ prepare_ack_pkg (struct pkg *pkg, uint8_t seq_num, pkg_t pkg_type)
 void 
 prepare_data_pkg (struct pkg *pkg, void *buf, uint8_t size)
 {
-  prepare_pkg (pkg, DATA, get_seq_num (), size);
-
   memset (pkg->data, 0, MAX_DATA);
   memcpy (pkg->data, buf, min (size, MAX_DATA));
+
+  prepare_pkg (pkg, DATA, get_seq_num (), size);
 }
 
 /* recebe o tamanho do arquivo */
 void 
 prepare_size_pkg (struct pkg *pkg, uint32_t size)
 {
-  prepare_pkg (pkg, SIZE, get_seq_num (), sizeof size);
-
   memset (pkg->data, 0, MAX_DATA);
   memcpy (pkg->data, &size, sizeof size);
+
+  prepare_pkg (pkg, SIZE, get_seq_num (), sizeof size);
 }
 
 void 
 prepare_treasure_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, char *filename)
 {
-  prepare_pkg (pkg, pkg_type, seq_num, strlen(filename));
-  
   memset (pkg->data, 0, MAX_DATA);
 
   memcpy (pkg->data, seq_num, sizeof seq_num);
   memcpy (pkg->data + sizeof seq_num, filename, strlen(filename));
+
+  prepare_pkg (pkg, pkg_type, seq_num, strlen(filename));
 }
 
 void 
