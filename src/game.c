@@ -5,7 +5,7 @@
 void 
 receive_move_state ()
 {
-	if (snail_recv(&jogo.recv, 1) != EXIT_SUCCESS)
+	if (snail_recv(&jogo.recv, 0) != EXIT_SUCCESS)
 	 	{
 			fprintf(stderr, "Erro ao receber pacote do cliente.\n");
 			return;
@@ -27,7 +27,7 @@ receive_move_state ()
       }
 		else
 			{
-				ok_ack_pkg (); 	
+				ok_ack_pkg (jogo.recv.sequence_number); 	
 			}
 }
 
@@ -95,7 +95,7 @@ void
 start_talking_state ()
 {
   while (1) {
-    snail_recv(&jogo.recv, 1);
+    snail_recv(&jogo.recv, 0);
     if (jogo.recv.type == FREE )
     {
       jogo.estado = MANDA;
