@@ -28,7 +28,7 @@ init_sliding_window ();
 int
 wait_res ();
 
-int
+struct pkg *
 wait_pkg_n (uint8_t n);
 
 int 

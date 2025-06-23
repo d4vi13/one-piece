@@ -1,5 +1,4 @@
 #include "comm_dev.h"
-#include "../checksum.h"
 #include "../escape.h"
 #include "../snail.h"
 

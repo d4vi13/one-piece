@@ -2,7 +2,6 @@
 #define PKG_H
 
 #include "common.h"
-#include "checksum.h"
 
 #ifdef FREE_BSD
 
@@ -72,6 +71,20 @@ int
 treasure_ack (uint8_t seq_num, pkg_t pkg_type, char *filename);
 
 int
-ok_ack_pkg ();
+ok_ack_pkg (uint8_t seq_num);
+
+int
+resend_last_ack ();
+
+/*
+ * Calcula o checksum de um pacote.
+ * A soma considera: size + sequence_number + type + soma dos bytes de data.
+ * O valor retornado é o byte menos significativo (uint8_t) da soma.
+ */
+uint8_t calculate_checksum (struct pkg *pkg); 
+
+int
+validate_checksum (struct pkg *pkg);
+
 
 #endif

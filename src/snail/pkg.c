@@ -43,7 +43,7 @@ prepare_treasure_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, char *fi
 {
   memset (pkg->data, 0, MAX_DATA);
 
-  memcpy (pkg->data, seq_num, sizeof seq_num);
+  memcpy (pkg->data, &seq_num, sizeof seq_num);
   memcpy (pkg->data + sizeof seq_num, filename, strlen(filename));
 
   prepare_pkg (pkg, pkg_type, seq_num, strlen(filename));
@@ -123,3 +123,26 @@ send_start_talking ()
   }
 
 }
+
+uint8_t
+calculate_checksum (struct pkg *pkg)
+{
+	uint16_t sum = 0;
+	
+	sum += pkg->size;
+	sum += pkg->sequence_number;
+	sum += pkg->type;
+
+	for (int i = 0; i < pkg->size; i++) 
+		sum += pkg->data[i];
+
+	/* Retorna os 8 bits menos significativos */
+	return (uint8_t)(sum & 0xFF);
+}
+
+int
+validate_checksum ( struct pkg *pkg)
+{
+  uint8_t expected = calculate_checksum (pkg);
+  return (pkg->checksum == expected);
+}    

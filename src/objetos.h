@@ -14,7 +14,7 @@ enum obj_types {
 typedef enum obj_types obj_types;
 
 extern int arquivos[];
-extern char extensao[][];
+extern char extensao[][13];
 extern int pkg_type[];
 
 char* 
