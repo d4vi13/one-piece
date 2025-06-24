@@ -6,8 +6,10 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+
 #include "snail/snail.h"
 #include "snail/file_ops.h"
+#include "snail/pkg.h"
 
 #include "objetos.h"
 
@@ -32,10 +34,32 @@ struct Jogo{
 
 	state estado;
 	int treasure;
+	char* file_name;
 };
 
 typedef struct Jogo Jogo, *pJogo;
 
 extern Jogo jogo;
+
+void inicializa_jogo();
+
+void 
+receive_move_state ();
+
+void 
+send_move_state ();
+
+void
+receive_treasure_state ();
+
+void
+send_treasure_state ();
+
+void 
+stop_talking_state ();
+
+void
+start_talking_state ();
+
 
 #endif

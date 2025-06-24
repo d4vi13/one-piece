@@ -2,8 +2,10 @@
 
 Jogo jogo;
 
-int main(int argc, char *argv[]) {
-  if (argc < 2) {
+int main(int argc, char *argv[]) 
+{
+  if (argc < 2) 
+	{
     fprintf(stderr, "Uso: %s <interface>\n", argv[0]);
     return 1;
   }
@@ -11,12 +13,14 @@ int main(int argc, char *argv[]) {
   init_snail(argv[1]);
   memset(jogo.grid, 0, sizeof(jogo.grid));
   jogo.grid[jogo.y][jogo.x] = 1;
+	jogo.estado = MANDA;
 
-	while (1) {
-	switch (jogo.estado) 
+	while (1) 
+	{
+		switch (jogo.estado) 
 		{
 			case MANDA:
-				sending_move_state ();
+				send_move_state ();
 				break;
 			case RECEBE:
 				receive_treasure_state ();
@@ -29,4 +33,5 @@ int main(int argc, char *argv[]) {
 				break;
 		}
 	}
+	return 0;
 }

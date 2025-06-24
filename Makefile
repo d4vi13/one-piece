@@ -7,8 +7,8 @@ BUILD_DIR = build
 BIN= server client
 
 # Source files
-SERVER_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/server.c
-CLIENT_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/client.c
+SERVER_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/server.c src/game.c src/objetos.c
+CLIENT_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/client.c src/game.c src/objetos.c
 SERVER_OBJS = $(SERVER_SRCS:%.c=$(BUILD_DIR)/%.o)
 CLIENT_OBJS = $(CLIENT_SRCS:%.c=$(BUILD_DIR)/%.o)
 
