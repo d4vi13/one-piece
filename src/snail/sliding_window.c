@@ -12,11 +12,13 @@ print_sw_status ()
   for (int i = 0; i < 4; i++)
   {
     if (i == sliding_window.head)
-      printf ("(%d) ", sliding_window.pkgs[i].sequence_number);
+      printf ("(%d:%d) ", sliding_window.pkgs[i].sequence_number, sliding_window.pkgs[i].type);
     else
-      printf ("%d ", sliding_window.pkgs[i].sequence_number);
+      printf ("%d:%d ", sliding_window.pkgs[i].sequence_number, sliding_window.pkgs[i].type);
   }
+  sleep(1);
 }
+
 
 void 
 init_sliding_window ()
@@ -59,6 +61,7 @@ resend (uint8_t n)
 {
   errno = 0;
 
+  printf("%s\n", __func__); 
   print_sw_status ();
 
   int ret, i = sliding_window.head;
@@ -82,7 +85,7 @@ int
 wait_any_res ()
 {
   errno = 0;
-  
+  printf("%s\n", __func__); 
   int ret = 0;
 
   while (1)
@@ -118,6 +121,7 @@ wait_pkg_n (uint8_t n)
 {
   errno = 0;
   
+  printf("%s\n", __func__); 
   int ret = 0;
 
   while (1)
@@ -172,6 +176,7 @@ snail_send (struct pkg *pkg)
 {
   errno = 0;
 
+  printf("%s\n", __func__); 
 
   if (window_full ())
     {
@@ -192,6 +197,8 @@ snail_recv (struct pkg *pkg, int ack)
 {
   errno = 0;
 
+  printf("%s\n", __func__); 
+
   int ret = 0;
     
   memset (pkg, 0, sizeof *pkg);
@@ -206,7 +213,7 @@ snail_recv (struct pkg *pkg, int ack)
           //perror ("Nao pode receber pacote: ");
           continue;
         }
-      if (pkg->sequence_number == sliding_window.expected_pkg_num)
+      if (pkg->sequence_number == sliding_window.expected_pkg_num && (!ACKED(pkg->type)))
         break;
       else 
         {

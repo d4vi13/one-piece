@@ -43,8 +43,7 @@ prepare_treasure_pkg (struct pkg *pkg, pkg_t pkg_type, uint8_t seq_num, char *fi
 {
   memset (pkg->data, 0, MAX_DATA);
 
-  memcpy (pkg->data, &seq_num, sizeof seq_num);
-  memcpy (pkg->data + sizeof seq_num, filename, strlen(filename));
+  memcpy (pkg->data, filename, strlen(filename));
 
   prepare_pkg (pkg, pkg_type, seq_num, strlen(filename));
 }
@@ -66,6 +65,17 @@ ack_pkg (uint8_t seq_num)
 
   return EXIT_SUCCESS;
 } 
+
+int 
+error_pkg (uint8_t seq_num)
+{
+  errno = 0;
+
+  prepare_ack_pkg (&snail.ack, seq_num, ERROR);
+  while (send_pkg (&snail.ack) == EXIT_FAILURE);
+
+  return EXIT_SUCCESS;
+}
 
 int 
 ok_ack_pkg (uint8_t seq_num)
@@ -101,6 +111,7 @@ resend_last_ack ()
       return EXIT_FAILURE;
     }
 
+  printf("last ack was %d\n", snail.ack.sequence_number);
   while (send_pkg (&snail.ack) == EXIT_FAILURE);
 
   return EXIT_SUCCESS;

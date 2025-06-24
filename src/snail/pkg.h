@@ -73,6 +73,9 @@ treasure_ack (uint8_t seq_num, pkg_t pkg_type, char *filename);
 int
 ok_ack_pkg (uint8_t seq_num);
 
+void
+send_start_talking ();
+
 int
 resend_last_ack ();
 

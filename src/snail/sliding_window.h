@@ -14,7 +14,7 @@ struct sliding_window
   struct pkg pkgs[WINDOW_SIZE]; 
   struct pkg res;
 
-  uint8_t counter;
+  uint8_t counter : COUNTER_SIZE;
   uint8_t head : 2; // used for sending mode
   
   uint8_t expected_pkg_num : 5; // used for receiving mode

@@ -6,7 +6,7 @@ int pkg_type[3] = {
 	IMG_ACK_NAME
 };
 
-char extensao[3][13] = {
+char extensao[3][15] = {
 	"objetos/%d.txt",
 	"objetos/%d.mp4",
 	"objetos/%d.jpg"
@@ -14,13 +14,13 @@ char extensao[3][13] = {
 
 int arquivos[8] = {
 	TEXTO,
-	IMAGEM,
-	VIDEO,
 	TEXTO,
-	IMAGEM,
-	VIDEO,
 	TEXTO,
-	IMAGEM
+	TEXTO,
+	TEXTO,
+	TEXTO,
+	TEXTO,
+	TEXTO
 };
 
 char* 
