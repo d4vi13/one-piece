@@ -6,16 +6,11 @@ Jogo jogo;
 int
 main (int argc, char *argv[])
 {
-  if (argc < 3)
+  if (argc < 2)
     {
-      fprintf (stderr, "Uso: %s <interface> <tipos.txt>\n", argv[0]);
+      fprintf (stderr, "Uso: %s <interface>\n", argv[0]);
       return EXIT_FAILURE;
     }
-
-  /*if (carregar_tipos_do_arquivo(argv[2]) != 0) {
-    fprintf(stderr, "Erro ao carregar os tipos de arquivos.\n");
-    return 1;
-  }*/
 
   ler_tipos_arquivos_do_usuario();
   init_snail (argv[1]);
