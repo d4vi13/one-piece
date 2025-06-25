@@ -21,6 +21,7 @@ extern int arquivos[8];
 extern char extensao[][EXTENSAO_TAM];
 extern int pkg_type[];
 void ler_tipos_arquivos_do_usuario();
+int carregar_tipos_do_arquivo(const char *path);
 
 char *filename (int t);
 
