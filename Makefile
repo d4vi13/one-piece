@@ -1,6 +1,6 @@
 #Compiler and flags
 CC = gcc
-CFLAGS =  -Wno-packed-bitfield-compat 
+CFLAGS =  -Wno-implicit-function-declaration -Wno-packed-bitfield-compat 
 # Directories
 SRC_DIRS = src/snail src/snail/comm_dev
 BUILD_DIR = build
