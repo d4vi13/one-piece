@@ -174,7 +174,7 @@ receive_move_state ()
   if (jogo.treasure > 0)
     {
       treasure_ack (jogo.recv.sequence_number,
-                    pkg_type[arquivos[jogo.treasure]],
+                    pkg_type[arquivos[jogo.treasure - 1]],
                     filename (jogo.treasure));
       jogo.estado = COMECA_FALAR;
     }
@@ -310,6 +310,10 @@ receive_treasure_state ()
       printf ("Arquivo salvo com sucesso: %s\n", jogo.file_name);
     }
 
+  char cmd[64];
+  sprintf(cmd, "open %s", jogo.file_name);
+  system(cmd);
+
   free (jogo.file_name);
   jogo.file_name = NULL;
   jogo.estado = COMECA_FALAR;
@@ -333,6 +337,8 @@ send_treasure_state ()
 
   send_file (filename (jogo.treasure));
 
+
+
   jogo.estado = PARA_DE_FALAR;
 }
 
@@ -352,7 +358,7 @@ start_talking_state ()
   sleep (1); // espera 1 segundo para mostrar a mensagem
   while (1)
     {
-      snail_recv (&jogo.recv, 0);
+      snail_recv (&jogo.recv, 1);
       if (jogo.recv.type == FREE)
         {
           jogo.estado = MANDA;

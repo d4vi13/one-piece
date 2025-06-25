@@ -104,12 +104,6 @@ resend_last_ack ()
 {
   errno = 0;
 
-  if (snail.pkg.sequence_number == 0)
-    {
-      fprintf (stderr, "Nenhum pacote enviado ainda.\n");
-      return EXIT_FAILURE;
-    }
-
   while (send_pkg (&snail.ack) == EXIT_FAILURE);
 
   return EXIT_SUCCESS;

@@ -203,7 +203,7 @@ snail_recv (struct pkg *pkg, int ack)
       ret = recv_pkg(pkg); 
       if (ret != EXIT_SUCCESS)
         {
-          perror ("Nao pode receber pacote: ");
+        //perror ("Nao pode receber pacote: ");
           continue;
         }
       if (pkg->sequence_number == sliding_window.expected_pkg_num && (!ACKED(pkg->type)))
@@ -229,13 +229,8 @@ send_start_talking ()
   errno = 0;
   struct pkg pkg;
   prepare_ack_pkg (&pkg, get_seq_num (), FREE);
-  while (1) {
-    send_pkg (&pkg);
+  snail_send (&pkg);
     
-    if (recv_pkg (&pkg) == EXIT_SUCCESS && !ACKED(pkg.type))
-    {
-      break;
-    }
-  }
+  wait_pkg_n(pkg.sequence_number); 
 
 }

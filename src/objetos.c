@@ -19,16 +19,16 @@ int arquivos[QTD_ARQUIVOS] = {
 	TEXTO,
 	TEXTO,
 	TEXTO,
-	TEXTO,
-	TEXTO
+	VIDEO,
+	IMAGEM
 };
 
 char* 
 filename (int t) {
-	char *str = malloc (EXTENSAO_TAM + 1);
-	str[EXTENSAO_TAM] = 0;
+	char *str = malloc (EXTENSAO_TAM * 2);
+	memset(str, 0, EXTENSAO_TAM * 2);
 
-	sprintf(str, extensao[arquivos[t]], t);
+	sprintf(str, extensao[arquivos[t-1]], t);
 
 	return str;
 }
