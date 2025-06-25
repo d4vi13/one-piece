@@ -84,7 +84,7 @@ recv_file (char *filename)
 
   while (1)
     {
-      snail_recv (&snail.pkg, 1);
+      snail_recv_and_ack (&snail.pkg);
       if (snail.pkg.type == END_OF_FILE)
         break;
       write (file, snail.pkg.data, snail.pkg.size);

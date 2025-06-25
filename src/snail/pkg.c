@@ -55,59 +55,13 @@ prepare_eof_pkg (struct pkg *pkg)
   prepare_pkg (pkg, END_OF_FILE, get_seq_num (), 0);
 }
 
-int 
-ack_pkg (uint8_t seq_num)
+void  
+prepare_start_talking_pkg (struct pkg *pkg)
 {
-  errno = 0;
-
-  prepare_ack_pkg (&snail.ack, seq_num, ACK);
-  while (send_pkg (&snail.ack) == EXIT_FAILURE);
-
-  return EXIT_SUCCESS;
-} 
-
-int 
-error_pkg (uint8_t seq_num)
-{
-  errno = 0;
-
-  prepare_ack_pkg (&snail.ack, seq_num, ERROR);
-  while (send_pkg (&snail.ack) == EXIT_FAILURE);
-
-  return EXIT_SUCCESS;
+  memset (pkg->data, 0, MAX_DATA);
+  prepare_pkg (pkg, START_TALKING, get_seq_num(), 0);
 }
 
-int 
-ok_ack_pkg (uint8_t seq_num)
-{
-  errno = 0;
-
-  prepare_ack_pkg (&snail.ack, seq_num, OK_ACK);
-  while (send_pkg (&snail.ack) == EXIT_FAILURE);
-
-  return EXIT_SUCCESS;
-}
-
-int 
-treasure_ack (uint8_t seq_num, pkg_t pkg_type, char *filename)
-{
-  errno = 0;
-
-  prepare_treasure_pkg (&snail.ack, pkg_type, seq_num, filename);
-  while (send_pkg (&snail.ack) == EXIT_FAILURE);
-
-  return EXIT_SUCCESS;
-}
-
-int 
-resend_last_ack ()
-{
-  errno = 0;
-
-  while (send_pkg (&snail.ack) == EXIT_FAILURE);
-
-  return EXIT_SUCCESS;
-}
 
 uint8_t
 calculate_checksum (struct pkg *pkg)

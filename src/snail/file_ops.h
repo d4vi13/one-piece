@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "snail.h"
-#include "sliding_window.h"
+#include "sliding_window/sliding_window.h"
 
 #include <fcntl.h>
 #include <sys/stat.h>

@@ -4,6 +4,7 @@
 #include "comm_dev/comm_dev.h"
 #include "common.h"
 #include "pkg.h"
+#include "sliding_window/sliding_window.h"
 
 struct snail
 {

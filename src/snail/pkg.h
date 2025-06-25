@@ -21,7 +21,7 @@ enum pkg_t
   FREE2,
   NACK,
   OK_ACK,
-  FREE,
+  START_TALKING,
   SIZE,
   DATA,
   TEXT_ACK_NAME,
@@ -64,20 +64,8 @@ prepare_size_pkg (struct pkg *pkg, uint32_t size);
 void 
 prepare_eof_pkg (struct pkg *pkg);
  
-int 
-ack_pkg (uint8_t seq_num);
-
-int
-treasure_ack (uint8_t seq_num, pkg_t pkg_type, char *filename);
-
-int
-ok_ack_pkg (uint8_t seq_num);
-
-void
-send_start_talking ();
-
-int
-resend_last_ack ();
+void  
+prepare_start_talking_pkg (struct pkg *pkg);
 
 /*
  * Calcula o checksum de um pacote.

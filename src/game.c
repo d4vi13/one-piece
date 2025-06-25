@@ -158,7 +158,7 @@ void
 receive_move_state ()
 {
   desenha ();
-  if (snail_recv (&jogo.recv, 0) != EXIT_SUCCESS)
+  if (snail_recv (&jogo.recv) != EXIT_SUCCESS)
     {
       fprintf (stderr, "Erro ao receber pacote do cliente.\n");
       return;
@@ -242,7 +242,7 @@ void
 receive_treasure_state ()
 {
   struct pkg tamanho_pkg;
-  if (snail_recv (&tamanho_pkg, 0) != EXIT_SUCCESS || tamanho_pkg.type != SIZE)
+  if (snail_recv (&tamanho_pkg) != EXIT_SUCCESS || tamanho_pkg.type != SIZE)
     {
       fprintf (stderr, "Erro ao receber tamanho do arquivo.\n");
       return;
@@ -360,8 +360,9 @@ void
 stop_talking_state ()
 {
   printf ("Parando de falar...\n");
-  sleep (1);             // espera 1 segundo para mostrar a mensagem
-  send_start_talking (); // espera por qualquer coisa e sai
+  sleep(1);
+
+  stop_talking (); // espera por qualquer coisa e sai
   jogo.estado = RECEBE;
 }
 
@@ -370,13 +371,7 @@ start_talking_state ()
 {
   printf ("Começando a falar...\n");
   sleep (1); // espera 1 segundo para mostrar a mensagem
-  while (1)
-    {
-      snail_recv (&jogo.recv, 1);
-      if (jogo.recv.type == FREE)
-        {
-          jogo.estado = MANDA;
-          break;
-        }
-    }
+
+  start_talking ();
+  jogo.estado = MANDA;
 }

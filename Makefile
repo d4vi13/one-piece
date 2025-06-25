@@ -2,7 +2,8 @@
 CC = gcc
 CFLAGS =  -Wno-implicit-function-declaration -Wno-packed-bitfield-compat 
 # Directories
-SRC_DIRS = src/snail src/snail/comm_dev
+SRC_DIRS = src/snail src/snail/comm_dev src/snail/sliding_window
+
 BUILD_DIR = build
 BIN= server client
 
