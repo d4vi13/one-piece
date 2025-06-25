@@ -195,6 +195,12 @@ send_move_state ()
   char c = ler_comando ();
   if (c == 'q')
     exit (0);
+  
+  if (jogo.treasure == 8)
+  {
+    printf ("Fim de jogo! Você encontrou todos os tesouros.\n");
+    exit (0);
+  }
 
   pkg_t dir = direcao_para_tipo (c);
   if (dir == ERROR)
@@ -225,6 +231,7 @@ send_move_state ()
       printf ("Tesouro encontrado: %s@\n", res->data);
       atualiza_posicao (dir);
       jogo.grid[jogo.y][jogo.x] = -1;
+      jogo.treasure++;
       jogo.file_name = strdup ((char *)res->data);
       jogo.estado = PARA_DE_FALAR;
       return;
