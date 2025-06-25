@@ -15,6 +15,7 @@ main (int argc, char *argv[])
   memset (jogo.grid, 0, sizeof (jogo.grid));
   jogo.grid[jogo.y][jogo.x] = 1;
   jogo.estado = MANDA;
+  jogo.treasure = 0;
 
   while (1)
     {
