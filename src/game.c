@@ -69,7 +69,11 @@ tesouro_na_posicao ()
   y = jogo.y;
   ret = jogo.grid[y][x];
 
-  jogo.grid[y][x] = 0; // coletado!
+  if (ret > 0)
+    jogo.grid[y][x] = -1; // coletado!  
+  else if (ret < 0) {
+    ret = 0;
+  }
 
   return ret;
 }
@@ -90,8 +94,10 @@ desenha ()
         {
           if (jogo.x == i && jogo.y == j)
             printf ("@ ");
-          else if (jogo.grid[j][i])
+          else if (jogo.grid[j][i] > 0)
             printf (". ");
+          else if (jogo.grid[j][i] == -1)
+            printf ("X ");
           else
             printf ("- ");
         }
@@ -165,7 +171,7 @@ receive_move_state ()
   atualiza_posicao (jogo.recv.type);
 
   jogo.treasure = tesouro_na_posicao ();
-  if (jogo.treasure)
+  if (jogo.treasure > 0)
     {
       treasure_ack (jogo.recv.sequence_number,
                     pkg_type[arquivos[jogo.treasure]],
@@ -203,7 +209,6 @@ send_move_state ()
   if (res->type == OK_ACK)
     {
       printf ("Movimento realizado com sucesso!\n");
-      sleep (1); // espera 1 segundo para mostrar a mensagem
       atualiza_posicao (dir);
       return;
     }
@@ -211,8 +216,8 @@ send_move_state ()
   if (res->type >= TEXT_ACK_NAME && res->type <= IMG_ACK_NAME)
     {
       printf ("Tesouro encontrado: %s@\n", res->data);
-      sleep (1); // espera 1 segundo para mostrar a mensagem
       atualiza_posicao (dir);
+      jogo.grid[jogo.y][jogo.x] = -1;
       jogo.file_name = strdup ((char *)res->data);
       jogo.estado = PARA_DE_FALAR;
       return;
@@ -222,22 +227,19 @@ send_move_state ()
 void
 receive_treasure_state ()
 {
-  printf ("Esperando tesourto\n");
-  // espera pacote SIZE com tamanho do arq
   struct pkg tamanho_pkg;
   if (snail_recv (&tamanho_pkg, 0) != EXIT_SUCCESS || tamanho_pkg.type != SIZE)
     {
-      fprintf (stdout, "Erro ao receber tamanho do arquivo.\n");
+      fprintf (stderr, "Erro ao receber tamanho do arquivo.\n");
       return;
     }
 
-  printf(" tamanho %d\n", tamanho_pkg.sequence_number);
   uint32_t tamanho;
   memcpy (&tamanho, tamanho_pkg.data, sizeof (uint32_t));
 
   if (!jogo.file_name)
     {
-      fprintf (stdout, "Erro: nome do arquivo não está definido!\n");
+      fprintf (stderr, "Erro: nome do arquivo não está definido!\n");
       return;
     }
 
@@ -247,7 +249,7 @@ receive_treasure_state ()
     {
       if (!S_ISREG (st.st_mode))
         {
-          fprintf (stdout, "Erro: o destino não é um arquivo regular.\n");
+          fprintf (stderr, "Erro: o destino não é um arquivo regular.\n");
 
           error_pkg(tamanho_pkg.sequence_number);
           free (jogo.file_name);
@@ -261,7 +263,6 @@ receive_treasure_state ()
   if (!file)
     {
       perror("failed to open file");
-      printf ("failed to create file\n");
     }
   else
     {
@@ -273,10 +274,7 @@ receive_treasure_state ()
   struct statvfs fs;
   if (statvfs (jogo.file_name, &fs) != 0)
     {
-      printf ("Erro ao aessar o sistema de arquivos com statvfs\n");
       perror ("Erro ao aessar o sistema de arquivos com statvfs\n");
-      // prepare_ack_pkg(&jogo.send, get_seq_num(), ERROR);
-      // snail_send(&jogo.send);
       error_pkg(tamanho_pkg.sequence_number);
       free (jogo.file_name);
       jogo.file_name = NULL;
@@ -289,7 +287,7 @@ receive_treasure_state ()
   const unsigned long long tolerancia = 8192;
   if (tamanho > espaco_livre - tolerancia)
     {
-      fprintf (stdout,
+      fprintf (stderr,
                "Espaço insuficiente: %u bytes requeridos, %llu disponíveis.\n",
                tamanho, espaco_livre);
 
@@ -301,7 +299,6 @@ receive_treasure_state ()
     }
 
   // se tem espaco suficiente, envia ACK e recebe arquivo
-  printf("ack do tamanho %d\n", tamanho_pkg.sequence_number);
   ack_pkg (tamanho_pkg.sequence_number);
 
   if (recv_file (jogo.file_name) != EXIT_SUCCESS)
@@ -324,14 +321,12 @@ send_treasure_state ()
   int tamanho = obter_tamanho_arquivo (
       filename (jogo.treasure)); // pega tamanho do arquivo
   prepare_size_pkg (&jogo.send, tamanho);
-  printf ("mandando tamanho %d, seq : %d\n", tamanho,
-          jogo.send.sequence_number);
   snail_send (&jogo.send);
 
   struct pkg *res = wait_pkg_n (jogo.send.sequence_number);
   if (res->type == ERROR)
     {
-      fprintf (stdout, "Sem espaço suficiente para enviar o arquivo.\n");
+      fprintf (stderr, "Sem espaço suficiente para enviar o arquivo.\n");
       jogo.estado = PARA_DE_FALAR;
       return;
     }

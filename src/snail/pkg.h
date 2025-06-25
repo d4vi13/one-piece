@@ -18,7 +18,7 @@
 /* Tipos de pacotes a serem usados pelo protocolo */
 enum pkg_t
 {
-  ACK,
+  FREE2,
   NACK,
   OK_ACK,
   FREE,
@@ -32,7 +32,7 @@ enum pkg_t
   SHIFT_UP,
   SHIFT_DOWN,
   SHIFT_LEFT,
-  FREE2,
+  ACK,
   ERROR
 };
 

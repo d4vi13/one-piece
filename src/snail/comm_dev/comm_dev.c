@@ -127,7 +127,7 @@ _recv_pkg (struct pkg *pkg)
 #ifdef LINUX
       ret = recv(comm_dev.fd, escaped_buf, sizeof(escaped_buf), 0);
       if (ret == -1) {
-        perror("Nao pode receber o pacote");
+        //perror("Nao pode receber o pacote");
         return EXIT_FAILURE;
       }
       received_len = ret;

@@ -99,7 +99,6 @@ treasure_ack (uint8_t seq_num, pkg_t pkg_type, char *filename)
   return EXIT_SUCCESS;
 }
 
-
 int 
 resend_last_ack ()
 {
@@ -111,28 +110,9 @@ resend_last_ack ()
       return EXIT_FAILURE;
     }
 
-  printf("last ack was %d\n", snail.ack.sequence_number);
   while (send_pkg (&snail.ack) == EXIT_FAILURE);
 
   return EXIT_SUCCESS;
-}
-
-void
-send_start_talking ()
-{
-  errno = 0;
-
-  struct pkg pkg;
-  prepare_ack_pkg (&snail.pkg, get_seq_num (), FREE);
-  while (1) {
-    send_pkg (&snail.pkg);
-    
-    if (recv_pkg (&pkg) == EXIT_SUCCESS)
-    {
-      break;
-    }
-  }
-
 }
 
 uint8_t

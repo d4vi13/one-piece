@@ -6,13 +6,13 @@ int pkg_type[3] = {
 	IMG_ACK_NAME
 };
 
-char extensao[3][15] = {
+char extensao[3][EXTENSAO_TAM] = {
 	"objetos/%d.txt",
 	"objetos/%d.mp4",
 	"objetos/%d.jpg"
 };
 
-int arquivos[8] = {
+int arquivos[QTD_ARQUIVOS] = {
 	TEXTO,
 	TEXTO,
 	TEXTO,
@@ -25,8 +25,8 @@ int arquivos[8] = {
 
 char* 
 filename (int t) {
-	char *str = malloc (6);
-	str[5] = 0;
+	char *str = malloc (EXTENSAO_TAM + 1);
+	str[EXTENSAO_TAM] = 0;
 
 	sprintf(str, extensao[arquivos[t]], t);
 
