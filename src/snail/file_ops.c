@@ -5,43 +5,63 @@ send_file (char *filename)
 {
   errno = 0;
 
-  FILE* file = fopen (filename, "r");
-  if (!file)
+  int fd = open(filename, O_RDONLY);
+  if (fd < 0)
     {
       perror ("Nao pode abrir o arquivo");
       return EXIT_FAILURE;
-    } 
+    }
 
-  void *buf = malloc (MAX_DATA);
-  if (!buf)
+  struct stat st;
+  if (fstat(fd, &st) < 0)
     {
-      perror ("Nao pode alocar buffer de leitura: ");
+      perror("Erro ao obter informações do arquivo");
+      close(fd);
       return EXIT_FAILURE;
     }
-  
-  unsigned long long c = 0;
-  while (!feof (file))
-    {
-      int bytes_read = fread (buf, 1, MAX_DATA, file);      
-      if (bytes_read <= 0)
-        {
-          perror ("Nao consegui ler do arquivo: ");
-          return EXIT_FAILURE;
-        }
 
-      c += bytes_read;
-      printf ("bytes mandados %d\n", c);
-      prepare_data_pkg (&snail.pkg, buf, bytes_read);
-      snail_send (&snail.pkg); 
+  if (st.st_size == 0)
+    {
+      close(fd);
+      return EXIT_SUCCESS;  // Nada a enviar
     }
 
-  prepare_eof_pkg (&snail.pkg);
-  snail_send (&snail.pkg); 
+  void *data = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE | MAP_POPULATE, fd, 0);
+  if (data == MAP_FAILED)
+    {
+      perror("Erro ao mapear arquivo na memória");
+      close(fd);
+      return EXIT_FAILURE;
+    }
 
-  wait_pkg_n (snail.pkg.sequence_number);
+  if (madvise(data, st.st_size, MADV_WILLNEED | MADV_HUGEPAGE ) == -1)
+  {
+    perror ("madvise falhou");
+  }
 
-  return EXIT_FAILURE;
+  unsigned long long c = 0;
+  size_t offset = 0;
+  while (offset < st.st_size)
+    {
+      size_t chunk_size = (st.st_size - offset >= MAX_DATA) ? MAX_DATA : (st.st_size - offset);
+      prepare_data_pkg(&snail.pkg, (char *)data + offset, chunk_size);
+      snail_send(&snail.pkg);
+      c += chunk_size;
+      printf ("bytes mandados %llu seq %d\n", c, snail.pkg.sequence_number);
+      offset += chunk_size;
+    }
+
+  prepare_eof_pkg(&snail.pkg);
+  snail_send(&snail.pkg); 
+
+  wait_pkg_n(snail.pkg.sequence_number);
+
+  munmap(data, st.st_size);
+  close(fd);
+
+  return EXIT_SUCCESS;
 }
+
 
 void print (char *buf)
 {

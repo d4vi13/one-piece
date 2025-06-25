@@ -217,8 +217,6 @@ snail_recv (struct pkg *pkg, int ack)
           continue;
         }
     }
-
-  printf ("recebeu pacote %d type %d\n", pkg->sequence_number, pkg->type);
   
   sliding_window.expected_pkg_num++;
 

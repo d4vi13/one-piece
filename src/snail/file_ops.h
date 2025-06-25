@@ -5,6 +5,11 @@
 #include "snail.h"
 #include "sliding_window.h"
 
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
 int 
 send_file (char *filename);
 

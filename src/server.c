@@ -12,12 +12,12 @@ main (int argc, char *argv[])
       return EXIT_FAILURE;
     }
 
-  if (carregar_tipos_do_arquivo(argv[2]) != 0) {
+  /*if (carregar_tipos_do_arquivo(argv[2]) != 0) {
     fprintf(stderr, "Erro ao carregar os tipos de arquivos.\n");
     return 1;
-  }
+  }*/
 
-  //ler_tipos_arquivos_do_usuario();
+  ler_tipos_arquivos_do_usuario();
   init_snail (argv[1]);
   inicializa_jogo ();
 
