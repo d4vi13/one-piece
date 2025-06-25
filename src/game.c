@@ -18,7 +18,7 @@ inicializa_jogo ()
     {
       int x = rand () % GRID_SIZE;
       int y = rand () % GRID_SIZE;
-      if (jogo.grid[y][x] == 0)
+      if ((jogo.grid[y][x] == 0) && (y || x))
         {
           colocados++;
           jogo.grid[y][x] = colocados;
@@ -95,9 +95,11 @@ desenha ()
           if (jogo.x == i && jogo.y == j)
             printf ("@ ");
           else if (jogo.grid[j][i] > 0)
-            printf (". ");
+            printf ("$ ");
           else if (jogo.grid[j][i] == -1)
             printf ("X ");
+          else if (jogo.grid[j][i] == -2)
+            printf (". ");
           else
             printf ("- ");
         }
@@ -201,6 +203,10 @@ send_move_state ()
       return;
     }
 
+  if (!jogo.y && !jogo.x)
+  {
+    jogo.grid[jogo.y][jogo.x] = -2;
+  }
   // struct pkg movimento;
   prepare_ack_pkg (&jogo.send, get_seq_num (), dir);
   snail_send (&jogo.send);
@@ -210,6 +216,7 @@ send_move_state ()
     {
       printf ("Movimento realizado com sucesso!\n");
       atualiza_posicao (dir);
+      jogo.grid[jogo.y][jogo.x] = -2;
       return;
     }
 
