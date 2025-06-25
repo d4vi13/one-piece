@@ -19,6 +19,11 @@ print_sw_status ()
   sleep(1);
 }
 
+void 
+set_didnt_hear_back () 
+{
+  sliding_window.didnt_hear_back = 1;
+}
 
 void 
 init_sliding_window ()
@@ -97,11 +102,14 @@ wait_any_res ()
             resend (sliding_window.head);
           }
         errno = 0;
+        if (sliding_window.didnt_hear_back)
+          resend_last_ack();
         continue;
       }
 
     if (ACKED(sliding_window.res.type) && IN_RANGE(sliding_window.res.sequence_number))
       {
+        sliding_window.didnt_hear_back = 0;
         free_pkg_n (sliding_window.res.sequence_number);
         return EXIT_SUCCESS;
       }
@@ -131,6 +139,8 @@ wait_pkg_n (uint8_t n)
             perror ("Time out, reenviar toda a janela: ");
             resend (sliding_window.head);
           }
+          if (sliding_window.didnt_hear_back)
+            resend_last_ack();
         continue;
       }
 
@@ -139,6 +149,7 @@ wait_pkg_n (uint8_t n)
       {
         if (sliding_window.res.sequence_number >= n){
           free_pkg_n (sliding_window.res.sequence_number);
+          sliding_window.didnt_hear_back = 0;
           return &sliding_window.res;
         }
       }
@@ -232,5 +243,6 @@ send_start_talking ()
   snail_send (&pkg);
     
   wait_pkg_n(pkg.sequence_number); 
+
 
 }

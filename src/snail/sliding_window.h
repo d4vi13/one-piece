@@ -20,6 +20,8 @@ struct sliding_window
   uint8_t counter ;
   uint8_t head : 2; // used for sending mode
   
+  uint8_t didnt_hear_back;
+
   uint8_t expected_pkg_num : 5; // used for receiving mode
 };
 
@@ -43,4 +45,6 @@ snail_recv (struct pkg *pkg, int ack);
 void
 send_start_talking ();
 
+void 
+set_didnt_hear_back();
 #endif
