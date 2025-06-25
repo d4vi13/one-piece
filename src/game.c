@@ -365,4 +365,6 @@ start_talking_state ()
           break;
         }
     }
+
+    set_didnt_hear_back();
 }
