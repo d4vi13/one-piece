@@ -1,7 +1,7 @@
 #ifndef OBJETOS_H
 #define OBJETOS_H
 
-#include "snail/snail.h"
+#include "../snail/snail.h"
 #include "string.h"
 #include <stdio.h>
 

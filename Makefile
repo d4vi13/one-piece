@@ -2,14 +2,14 @@
 CC = gcc
 CFLAGS =  -Wno-implicit-function-declaration -Wno-packed-bitfield-compat 
 # Directories
-SRC_DIRS = src/snail src/snail/comm_dev src/snail/sliding_window
+SRC_DIRS = src/snail src/snail/comm_dev src/snail/sliding_window src/utils src/game src/objetos
 
 BUILD_DIR = build
 BIN= server client
 
 # Source files
-SERVER_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/server.c src/game.c src/objetos.c
-CLIENT_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/client.c src/game.c src/objetos.c
+SERVER_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/server.c 
+CLIENT_SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) src/client.c 
 SERVER_OBJS = $(SERVER_SRCS:%.c=$(BUILD_DIR)/%.o)
 CLIENT_OBJS = $(CLIENT_SRCS:%.c=$(BUILD_DIR)/%.o)
 

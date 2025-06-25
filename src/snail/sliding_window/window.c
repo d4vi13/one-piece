@@ -6,6 +6,13 @@ void
 init_sliding_window ()
 {
   sliding_window.head = 0;
+  sliding_window.seq_num = 0;
+}
+
+uint8_t
+get_seq_num ()
+{
+  return sliding_window.seq_num++;
 }
 
 int 

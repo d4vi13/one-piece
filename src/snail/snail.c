@@ -24,24 +24,3 @@ init_snail (char network_interface[])
   return EXIT_SUCCESS;
 }
 
-static inline void
-print_pkg (struct pkg pkg)
-{
-//if (pkg.start_marker != START_MARKER)
-//    return;
-
-  printf ("start_marker: %d\n", pkg.start_marker);
-  printf ("size: %d\n", pkg.size);
-  printf ("sequence_number: %d\n", pkg.sequence_number);
-  printf ("type: %d\n", pkg.type);
-  printf ("checksum: %d\n", pkg.checksum);
-  printf ("data: %s\n", pkg.data);
-}
-
-uint8_t
-get_seq_num ()
-{
-  return snail.seq_num++;
-}
-
-

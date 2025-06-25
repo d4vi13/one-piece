@@ -9,6 +9,10 @@
 
 #define ERRNO_IS_TIMEOUT (errno == EAGAIN || errno == EWOULDBLOCK)
 
+#define VLAN_1 0x81
+#define VLAN_2 0x88
+#define ESCAPE_MARKER 0xFF
+
 enum comm_t
 {
   SOCKET,

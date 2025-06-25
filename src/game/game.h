@@ -7,11 +7,12 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "snail/file_ops.h"
-#include "snail/pkg.h"
-#include "snail/snail.h"
+#include "../snail/file_ops.h"
+#include "../snail/pkg.h"
+#include "../snail/snail.h"
 
-#include "objetos.h"
+#include "../utils/file_utils.h"
+#include "../objetos/objetos.h"
 
 #define GRID_SIZE 8
 
@@ -44,16 +45,40 @@ extern Jogo jogo;
 
 void inicializa_jogo ();
 
-void receive_move_state ();
+void
+atualiza_posicao (pkg_t tipo);
 
-void send_move_state ();
+int
+tesouro_na_posicao ();
 
-void receive_treasure_state ();
+void
+limpar ();
 
-void send_treasure_state ();
+void
+desenha ();
 
-void stop_talking_state ();
+char
+ler_comando ();
 
-void start_talking_state ();
+pkg_t
+direcao_para_tipo (char c);
+
+void
+receive_move_state ();
+
+void
+send_move_state ();
+
+void
+receive_treasure_state ();
+
+void
+send_treasure_state ();
+
+void
+stop_talking_state ();
+
+void
+start_talking_state ();
 
 #endif

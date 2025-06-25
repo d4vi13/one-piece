@@ -21,6 +21,8 @@ struct sliding_window
   uint8_t head : 2; // used for sending mode
   
   uint8_t expected_pkg_num : 5; // used for receiving mode
+
+  uint8_t seq_num : 5;
 };
 
 extern struct sliding_window sliding_window; 
@@ -41,6 +43,9 @@ free_pkg_n(uint8_t n);
 
 void 
 add_pkg_to_window (struct pkg *pkg);
+
+uint8_t
+get_seq_num();
 
 /* RECV OPS*/
 

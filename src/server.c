@@ -1,5 +1,4 @@
-#include "game.h"
-#include "objetos.h"
+#include "game/game.h"
 
 Jogo jogo;
 
