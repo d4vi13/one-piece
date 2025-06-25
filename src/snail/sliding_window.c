@@ -9,14 +9,7 @@ print_sw_status ()
   printf ("counter: %d\n", sliding_window.counter);
   printf ("expected_pkg_num: %d\n", sliding_window.expected_pkg_num);
 
-  for (int i = 0; i < WINDOW_SIZE; i++)
-  {
-    if (i == sliding_window.head)
-      printf ("(%d:%d) ", sliding_window.pkgs[i].sequence_number, sliding_window.pkgs[i].type);
-    else
-      printf ("%d:%d ", sliding_window.pkgs[i].sequence_number, sliding_window.pkgs[i].type);
-  }
-  sleep(1);
+  printf("%d %d %d %d\n", sliding_window.pkgs[0].sequence_number, sliding_window.pkgs[1].sequence_number, sliding_window.pkgs[2].sequence_number, sliding_window.pkgs[3].sequence_number);
 }
 
 
@@ -42,21 +35,32 @@ pkg_n_pos (uint8_t n)
   return pos;
 }
 
-int 
-free_pkg_n (uint8_t n)
+
+int free_pkg_n(uint8_t n)
 {
-  uint8_t i, pos = pkg_n_pos (n);
-  i = 0;
 
+  if (sliding_window.counter == 0)
+    return EXIT_FAILURE;
 
-  while ((((sliding_window.head + i)  % WINDOW_SIZE) != pos) ) i++;
+  int i = 0;
+  while (i < sliding_window.counter)
+  {
+    uint8_t pos = (sliding_window.head + i) % WINDOW_SIZE;
+    if (sliding_window.pkgs[pos].sequence_number == n)
+    {
+      // Avança o head até liberar o pacote n
+      int to_free = i + 1;
+      sliding_window.head = (sliding_window.head + to_free) % WINDOW_SIZE;
+      sliding_window.counter -= to_free;
+      return EXIT_SUCCESS;
+    }
+    i++;
+  }
 
-
-  sliding_window.head = (pos + 1) % WINDOW_SIZE;
-  sliding_window.counter = sliding_window.counter - i - 1; 
-
-  return EXIT_SUCCESS;
+  // Pacote n não encontrado
+  return EXIT_FAILURE;
 }
+
 
 int 
 resend (uint8_t n)
@@ -85,7 +89,7 @@ wait_any_res ()
 {
   errno = 0;
   int ret = 0;
-
+  static long long k = 0;
   while (1)
   {
     ret = recv_pkg (&sliding_window.res);
@@ -102,8 +106,8 @@ wait_any_res ()
 
     if (ACKED(sliding_window.res.type) && IN_RANGE(sliding_window.res.sequence_number))
       {
-        free_pkg_n (sliding_window.res.sequence_number);
-        return EXIT_SUCCESS;
+        if (free_pkg_n (sliding_window.res.sequence_number) == EXIT_SUCCESS)
+          return EXIT_SUCCESS;
       }
 
     if (sliding_window.res.type == NACK)
@@ -179,7 +183,6 @@ snail_send (struct pkg *pkg)
       wait_any_res ();
     }
 
-  
   /* adiciona pacote na janela */
   add_pkg_to_window (pkg);
 
@@ -198,6 +201,7 @@ snail_recv (struct pkg *pkg, int ack)
     
   memset (pkg, 0, sizeof *pkg);
 
+  printf("esperando por %d\n", sliding_window.expected_pkg_num);
   while (1)
     {
       ret = recv_pkg(pkg); 
@@ -214,6 +218,8 @@ snail_recv (struct pkg *pkg, int ack)
           continue;
         }
     }
+
+  printf ("recebeu pacote %d type %d\n", pkg->sequence_number, pkg->type);
   
   sliding_window.expected_pkg_num++;
 
