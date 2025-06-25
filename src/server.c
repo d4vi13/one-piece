@@ -1,4 +1,5 @@
 #include "game.h"
+#include "objetos.h"
 
 Jogo jogo;
 
@@ -10,7 +11,8 @@ main (int argc, char *argv[])
       fprintf (stderr, "Uso: %s <interface>\n", argv[0]);
       return EXIT_FAILURE;
     }
-
+    
+  ler_tipos_arquivos_do_usuario();
   init_snail (argv[1]);
   inicializa_jogo ();
 
