@@ -17,9 +17,10 @@ enum obj_types
 
 typedef enum obj_types obj_types;
 
-extern int arquivos[];
+extern int arquivos[8];
 extern char extensao[][EXTENSAO_TAM];
 extern int pkg_type[];
+void ler_tipos_arquivos_do_usuario();
 
 char *filename (int t);
 
