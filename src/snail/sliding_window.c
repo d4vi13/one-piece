@@ -12,7 +12,6 @@ print_sw_status ()
   printf("%d %d %d %d\n", sliding_window.pkgs[0].sequence_number, sliding_window.pkgs[1].sequence_number, sliding_window.pkgs[2].sequence_number, sliding_window.pkgs[3].sequence_number);
 }
 
-
 void 
 init_sliding_window ()
 {
@@ -238,5 +237,6 @@ send_start_talking ()
   snail_send (&pkg);
     
   wait_pkg_n(pkg.sequence_number); 
+
 
 }
