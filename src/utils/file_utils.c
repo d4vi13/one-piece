@@ -31,6 +31,16 @@ verifica_arquivo (char *filename)
         }
     }
 
+  FILE *file = fopen (filename, "w");
+  if (!file)
+    {
+      perror("failed to open file");
+    }   
+  else
+    {   
+      fclose (file);
+    }     
+
   // verifica se ha espaco disponivel
   struct statvfs fs;
   if (statvfs (filename, &fs) != 0)
