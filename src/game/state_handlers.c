@@ -112,6 +112,7 @@ receive_treasure_state ()
       free(jogo.file_name);
       jogo.file_name = NULL;
 
+      jogo.estado = COMECA_FALAR;
       return;
     }
 
