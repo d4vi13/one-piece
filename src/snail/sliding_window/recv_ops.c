@@ -48,12 +48,12 @@ snail_recv_and_ack (struct pkg *pkg)
 }
 
 
+
 int
 wait_any_res ()
 {
   errno = 0;
   int ret = 0;
-  static long long k = 0;
   while (1)
   {
     ret = recv_pkg (&sliding_window.res);
@@ -75,7 +75,6 @@ wait_any_res ()
       }
   }
 }
-
 
 struct pkg *
 wait_pkg_n (uint8_t n)
@@ -100,11 +99,10 @@ wait_pkg_n (uint8_t n)
     // TODO make a macro that check all possible ACK types
     if (ACKED(sliding_window.res.type))
       {
-        if (sliding_window.res.sequence_number == n)
-            {
-            if (free_pkg_n (sliding_window.res.sequence_number) == EXIT_SUCCESS);
-                return &sliding_window.res;
-            }
+        if (sliding_window.res.sequence_number >= n){
+          free_pkg_n (sliding_window.res.sequence_number);
+          return &sliding_window.res;
+        }
       }
   }
 }
