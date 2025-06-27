@@ -10,6 +10,8 @@ struct snail
 {
   char network_interface[64];
   struct pkg pkg;
+  uint8_t addr;
+  uint8_t dest_addr;
 };
 
 extern struct snail snail;

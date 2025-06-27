@@ -12,8 +12,15 @@ init_snail (char network_interface[])
   memcpy (snail.network_interface, network_interface,
           min (strlen (network_interface), 64));
 
+#ifdef FREE_BSD
+  printf("Insira seu endereco: ");
+  scanf("%d", &snail.addr);
+  printf("Insira seu destino: ");
+  scanf("%d", &snail.dest_addr);
+#endif
+
   /* Cria raw socket para comunicacao*/
-  ret = init_comm_dev (SOCKET, network_interface);
+  ret = init_comm_dev (BPF, network_interface);
   if (ret == EXIT_FAILURE)
     {
       perror ("Erro ao iniciar dispositivo de comunicação\n");

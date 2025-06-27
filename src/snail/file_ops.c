@@ -26,7 +26,7 @@ send_file (char *filename)
       return EXIT_SUCCESS;  // Nada a enviar
     }
 
-  void *data = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE | MAP_POPULATE, fd, 0);
+  void *data = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE , fd, 0);
   if (data == MAP_FAILED)
     {
       perror("Erro ao mapear arquivo na memória");
@@ -34,10 +34,12 @@ send_file (char *filename)
       return EXIT_FAILURE;
     }
 
+#ifdef LINUX
   if (madvise(data, st.st_size, MADV_WILLNEED | MADV_HUGEPAGE ) == -1)
   {
     perror ("madvise falhou");
   }
+ #endif
 
   unsigned long long c = 0;
   size_t offset = 0;

@@ -42,6 +42,9 @@ typedef enum pkg_t pkg_t;
 struct __attribute__ ((packed)) pkg
 {
   uint8_t start_marker : 8;
+#ifdef FREE_BSD
+  uint8_t addr;
+#endif
   uint8_t size : 7;
   uint8_t sequence_number : 5;
   uint8_t type : 4;

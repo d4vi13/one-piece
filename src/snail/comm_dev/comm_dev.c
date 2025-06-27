@@ -52,12 +52,11 @@ send_pkg (struct pkg *pkg)
   errno = 0;
   int ret;
 
+  pkg->addr = snail.dest_addr;
+
   //Buffer para serialização e escape
   uint8_t raw_buf[PKG_SIZE];
   uint8_t escaped_buf[2 * PKG_SIZE]; // espaço extra para escapes
-
-  //Serializa pacote -> raw_buf
-  //size_t serialized_len = serialize_pkg(pkg, raw_buf);
 
   //Aplica escape -> escaped_buf
   int escaped_len = escape_bytes((uint8_t *)pkg, PKG_SIZE, escaped_buf);
@@ -95,22 +94,27 @@ _recv_pkg (struct pkg *pkg)
   int ret;
 
   //Buffer para leitura (máximo possível com escapes)
+#ifdef LINUX
   uint8_t escaped_buf[2 * PKG_SIZE];
+#endif
+
+#ifdef FREE_BSD
+  uint8_t escaped_buf[BPF_BUF_SIZE];
+#endif
   int received_len = 0;
 
   switch (comm_dev.comm_type) {
     case BPF:
 #ifdef FREE_BSD
       struct bpf_xhdr *bh;
-      char *buf = malloc(BPF_BUF_SIZE);
+      char *buf = malloc(sizeof(escaped_buf));
       if (!buf) {
         perror("Nao pode alocar buffer para bpf");
         return EXIT_FAILURE;
       }
 
-      ret = read(comm_dev.fd, buf, BPF_BUF_SIZE);
-      if (ret == -1) {
-        perror("Nao pode receber o pacote");
+      ret = read(comm_dev.fd, buf, sizeof(escaped_buf));
+      if (ret <= 0) {
         free(buf);
         return EXIT_FAILURE;
       }
@@ -137,6 +141,13 @@ _recv_pkg (struct pkg *pkg)
   //Remove escapes
   int raw_len = unescape_bytes(escaped_buf, received_len, (uint8_t *) pkg);
 
+#ifdef FREE_BSD
+  if (pkg->addr != snail.addr) 
+    {
+      return EXIT_FAILURE;
+    }
+#endif
+ 
   if (!valid_pkg (pkg) || !validate_checksum (pkg))
     {
       return EXIT_FAILURE;

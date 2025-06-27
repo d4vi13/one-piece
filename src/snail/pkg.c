@@ -62,7 +62,6 @@ prepare_start_talking_pkg (struct pkg *pkg)
   prepare_pkg (pkg, START_TALKING, get_seq_num(), 0);
 }
 
-
 uint8_t
 calculate_checksum (struct pkg *pkg)
 {
